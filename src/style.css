@@ -2,8 +2,9 @@
 
 :root {
     font-family: "Comfortaa", "Open Sans", sans-serif;
-
-}
+    --dark-color: rgb(58, 58, 63);
+    --light-color: white;
+  }
 
 body {
   margin: 0;
@@ -38,6 +39,13 @@ body {
   box-sizing: border-box;
 }
 
+.dark .navigation {
+  border-top: 1px solid var(--theme-color)
+}
+
+.light .navigation {
+  border-top: 1px solid var(--theme-color);
+}
 .nav-item {
   flex: 1;
   display: flex;
@@ -52,16 +60,31 @@ body {
   max-height: 3rem;
 }
 
+.nav-text {
+  font-size: small;
+}
+
 button {
   all: unset;
 }
 
-.hello {
+.title {
     min-height: 2rem;
     display: flex;
     align-items: center;    
     justify-content: center;
 }
 
-.light { background: white; color: rgb(58, 58, 63); }
-.dark { background: rgb(58, 58, 63); color: white; }
+.light { 
+  background: var(--light-color);
+  --theme-color: var(--dark-color);
+  color: var(--dark-color)
+  
+}
+
+.dark { 
+  background: var(--dark-color);
+  --theme-color: var(--light-color)
+  color: var(--light-color);
+}
+

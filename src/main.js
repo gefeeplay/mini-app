@@ -1,8 +1,34 @@
+import { createRouter, createWebHistory } from 'vue-router'
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
+import SettingsView from './components/SettingsView.vue'
+import FeedView from './components/FeedView.vue'
+import FriendsView from './components/FriendsView.vue'
+import TrainingView from './components/TrainingView.vue'
 
 const app = createApp(App)
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [{
+    name: 'Feed',
+    path: '/',
+    component: FeedView
+  },{
+    name: 'Training',
+    path: '/training',
+    component: TrainingView
+  },{
+    name: 'Friends',
+    path: '/friends',
+    component: FriendsView
+  },{
+    name: 'Settings',
+    path: '/settings',
+    component: SettingsView
+  }]
+})
 
 if (window.Telegram && window.Telegram.WebApp) {
   const tg = window.Telegram.WebApp
@@ -12,4 +38,4 @@ if (window.Telegram && window.Telegram.WebApp) {
   app.config.globalProperties.$tg = tg
 }
 
-app.mount('#app')
+app.use(router).mount('#app')

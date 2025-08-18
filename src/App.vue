@@ -1,8 +1,13 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, provide, ref } from 'vue'
+import Navigation from './components/Navigation.vue'
+import { provideTelegram } from './composables/useTelegram'
+provideTelegram()
 
 const userData = ref(null)
 const theme = ref('dark')
+
+provide('theme', theme);
 
 onMounted(() => {
   if (window.Telegram?.WebApp) {
@@ -18,38 +23,12 @@ onMounted(() => {
 <template>
 <div class="app" :class="theme">
   <div class="main">
-    <div class="hello">
-      <div v-if="userData">Добро пожаловать, {{ userData.username }}</div>
-      <div v-else="userData">Добро пожаловать, пользователь</div>
-    </div>
+    
+    <router-view></router-view>  
   </div>
 
 
-  <div class="navigation">
-    <button class="nav-item">
-      <span class="material-symbols-outlined">
-        menu
-      </span>Лента
-    </button>
-    <button class="nav-item">
-      <span class="material-symbols-outlined">
-        directions_run
-      </span>
-      Тренировки
-    </button>
-    <button class="nav-item">
-      <span class="material-symbols-outlined">
-        chat
-      </span>
-      Друзья
-    </button>
-    <button class="nav-item">
-      <span class="material-symbols-outlined">
-        settings
-      </span>
-      Настройки
-    </button>
-  </div>
+  <Navigation :curTheme="theme"/>
 </div>  
 </template>
 
