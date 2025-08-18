@@ -1,13 +1,14 @@
 <script setup>
-  import {onMounted, ref} from 'vue'
+import { onMounted, ref } from 'vue'
 
-  const userData = ref(null)
+const userData = ref(null)
+const theme = ref('dark')
 
-  onMounted(() => {
+onMounted(() => {
   if (window.Telegram?.WebApp) {
     const tg = window.Telegram.WebApp
     userData.value = tg.initDataUnsafe?.user
-    
+    theme.value = window.Telegram.WebApp.colorScheme;
   }
 })
 
@@ -15,9 +16,15 @@
 </script>
 
 <template>
-  
-  <div class="main">Добро пожаловать, {{ userData.username }}</div>
-  
+<div class="app" :class="theme">
+  <div class="main">
+    <div class="hello">
+      <div v-if="userData">Добро пожаловать, {{ userData.username }}</div>
+      <div v-else="userData">Добро пожаловать, пользователь</div>
+    </div>
+  </div>
+
+
   <div class="navigation">
     <button class="nav-item">
       <span class="material-symbols-outlined">
@@ -43,8 +50,7 @@
       Настройки
     </button>
   </div>
+</div>  
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
