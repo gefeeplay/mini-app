@@ -1,7 +1,23 @@
 <script setup>
+  import {onMounted, ref} from 'vue'
+
+  const userData = ref(null)
+
+  onMounted(() => {
+  if (window.Telegram?.WebApp) {
+    const tg = window.Telegram.WebApp
+    userData.value = tg.initDataUnsafe?.user
+    
+  }
+})
+
+
 </script>
 
 <template>
+  
+  <div class="main">Добро пожаловать, {{ userData.username }}</div>
+  
   <div class="navigation">
     <button class="nav-item">
       <span class="material-symbols-outlined">
@@ -30,32 +46,5 @@
 </template>
 
 <style scoped>
-.navigation {
-  display: flex;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
-.nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;    
-  justify-content: center;
-  gap: 0.5rem; 
-  color: white;
-  background-color: rgb(115, 109, 196);
-  padding: 0.5rem;
-  min-height: 2rem;
-  cursor: pointer;
-}
-
-button {
-  all: unset;
-}
 </style>
