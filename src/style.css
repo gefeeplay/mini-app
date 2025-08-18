@@ -23,7 +23,6 @@ body {
 .main {
   min-height: calc(100vh - 60px);
   text-align: center;
-  /*background-color: rgb(58, 58, 63);*/
   padding-bottom: 60px;
 }
 
@@ -53,8 +52,6 @@ body {
   align-items: center;    
   justify-content: center;
   gap: 0.5rem; 
-  /*color: white;*/
-  /*background-color: rgb(58, 58, 63);*/
   padding: 0.5rem;
   cursor: pointer;
   max-height: 3rem;
@@ -84,7 +81,7 @@ button {
 
 .dark { 
   background: var(--dark-color);
-  --theme-color: var(--light-color)
+  --theme-color: var(--light-color);
   color: var(--light-color);
 }
 

@@ -1,5 +1,5 @@
 <script setup>
-
+const { userData } = useTelegram()
 </script>
 
 <template>
