@@ -5,9 +5,9 @@ import { provideTelegram } from './composables/useTelegram'
 provideTelegram()
 
 const userData = ref(null)
-const theme = ref('dark')
+const theme = ref('light')
 
-provide('theme', theme);
+provide('theme', { theme, setTheme: (newTheme) => { theme.value = newTheme } })
 
 onMounted(() => {
   if (window.Telegram?.WebApp) {

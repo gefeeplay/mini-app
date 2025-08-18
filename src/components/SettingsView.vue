@@ -1,6 +1,8 @@
 <script setup>
 import { inject, ref } from 'vue';
 import { useTelegram } from '../composables/useTelegram'
+import './ToggleSwitch.vue'
+import ToggleSwitch from './ToggleSwitch.vue';
 
 const curTheme = inject('theme');
 
@@ -16,6 +18,7 @@ const userPhoto = ref(userData.photo_url)
         <div class="profile" v-if="userData">
             <div >Профиль {{ userData.username }}</div>
             <div class="user-photo" v-if="userPhoto"><img :src="userPhoto"></div>
+            <div class="avatar-placeholder"v-else></div>
         </div>
         <div class="profile" v-else>
             <div>Профиль Неизвестный</div>
@@ -23,9 +26,8 @@ const userPhoto = ref(userData.photo_url)
         </div>
         
         <div class="theme">
-            <div>Тема: {{ curTheme }}</div>
-            <div>Кнопка</div>
-
+            <div>Тема: {{ curTheme.theme }}</div>
+            <ToggleSwitch/>
         </div>
     </div>
 </template>
@@ -73,6 +75,7 @@ const userPhoto = ref(userData.photo_url)
 .theme {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .theme, .profile {
