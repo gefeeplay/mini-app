@@ -1,4 +1,6 @@
 <script setup>
+import { useTelegram } from '../composables/useTelegram'
+
 const { userData } = useTelegram()
 </script>
 

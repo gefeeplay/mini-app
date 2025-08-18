@@ -65,7 +65,7 @@ const userPhoto = ref(userData.photo_url)
   width: 100gh;
   align-items: center;
   justify-content: start;
-  padding: 0 2rem;
+  padding: 0 1rem;
   margin: 0.5rem 0;
   gap: 0.5rem;
 }
