@@ -1,18 +1,33 @@
 <script setup>
-import { inject, ref, computed } from 'vue';
+import { inject, ref, computed, onMounted } from 'vue';
 import { useTelegram } from '../composables/useTelegram'
 import './ToggleSwitch.vue'
 import ToggleSwitch from './ToggleSwitch.vue';
 import QrWindow from './QrWindow.vue';
+import ChangeProfile from './ChangeProfile.vue';
 
 const curTheme = inject('theme');
 
 const { userData } = useTelegram()
 const userPhoto = computed(() => userData.value?.photo_url || null)
 
-const username = ref(userData.value ? userData.value.username : 'Неизвестный')
+const tgUsername = ref(userData.value ? userData.value.username : 'Неизвестный') /* имя в телеграмме*/
+const username = ref('') /* имя в приложении - изменяемое*/
 
 const showQr = ref(false)
+const showEdit = ref(false)
+
+const saveUser = (newUsername) => {
+  username.value = newUsername
+  localStorage.setItem('username', newUsername)
+}
+
+onMounted(() => {
+  const savedName = localStorage.getItem('username')
+  if (savedName) {
+    username.value = savedName
+  }
+})
 
 </script>
 
@@ -22,10 +37,14 @@ const showQr = ref(false)
     </div>
     <div class="settings">
         <div class="profile">
-            <div>Профиль {{ username }}</div>
+            <div>Профиль
+              <k v-if="username">{{ username }}</k>
+              <k v-else>{{ tgUsername }}</k>
+            </div>
             <div class="user-photo" v-if="userPhoto"><img :src="userPhoto"></div>
             <div class="avatar-placeholder" v-else></div>  
-            <div class="edit"><span class="material-symbols-outlined">edit</span></div> 
+            <button class="edit" @click="showEdit = true"><span class="material-symbols-outlined">edit</span></button> 
+            <ChangeProfile :showEdit="showEdit" @closeEdit="showEdit = false" @saveUser="saveUser"/>
         </div>
         
         <div class="theme">
@@ -92,6 +111,7 @@ const showQr = ref(false)
 .edit {
   position: fixed;
   right: 32px;
+  cursor: pointer;
 }
 
 .theme {
