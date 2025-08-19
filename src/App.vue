@@ -23,7 +23,6 @@ onMounted(() => {
 <template>
 <div class="app" :class="theme">
   <div class="main">
-    
     <router-view></router-view>  
   </div>
 

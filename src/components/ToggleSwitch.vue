@@ -1,5 +1,5 @@
 <style scoped>
-  .switch {
+.switch {
   font-size: 1rem;
   position: relative;
   display: inline-block;
