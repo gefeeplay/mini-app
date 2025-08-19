@@ -72,6 +72,7 @@ const copyLink = async () => {
 .modal-title {
   font-size: 1rem;
   margin: 0 0 15px 0;
+  color: var(--dark-color);
 }
 
 .qr {
@@ -86,6 +87,7 @@ const copyLink = async () => {
 }
 
 .close-btn {
+  color: var(--dark-color);
   position: absolute;
   top: 10px;   
   right: 10px; 
