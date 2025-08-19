@@ -10,7 +10,7 @@ const curTheme = inject('theme');
 const { userData } = useTelegram()
 const userPhoto = computed(() => userData.value?.photo_url || null)
 
-const username = ref(userData.username ? userData.username : 'Неизвестный')
+const username = ref(userData.value ? userData.value.username : 'Неизвестный')
 
 const showQr = ref(false)
 
@@ -67,7 +67,14 @@ const showQr = ref(false)
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
-  object-fit: cover;
+  overflow: hidden;
+}
+
+.user-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  border-radius: 50%;
 }
 
 .avatar-placeholder {
