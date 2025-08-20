@@ -1,8 +1,7 @@
 <script setup>
 import { inject, ref, computed, onMounted } from 'vue';
 import { useTelegram } from '../composables/useTelegram'
-import './ToggleSwitch.vue'
-import ToggleSwitch from './ToggleSwitch.vue';
+import ToggleSwitch from './exportComponents/ToggleSwitch.vue';
 import QrWindow from './QrWindow.vue';
 import ChangeProfile from './ChangeProfile.vue';
 

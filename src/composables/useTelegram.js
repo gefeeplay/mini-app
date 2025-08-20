@@ -1,4 +1,4 @@
-import { ref, provide, inject } from 'vue'
+import { ref, computed, provide, inject } from 'vue'
 
 // Создаём символ для уникального ключа
 const TelegramSymbol = Symbol()
@@ -15,10 +15,13 @@ export function provideTelegram() {
     theme.value = tg.value.colorScheme
   }
 
+  const userPhoto = computed(() => userData.value?.photo_url || null)
+
   provide(TelegramSymbol, {
     userData,
     theme,
-    tg
+    tg,
+    userPhoto
   })
 }
 
