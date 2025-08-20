@@ -3,10 +3,47 @@ import { ref, onMounted, computed } from 'vue'
 import { useTelegram } from '../composables/useTelegram'
 import SearchInput from './exportComponents/SearchInput.vue'
 
-const { userPhoto } = useTelegram()
+const { userData, userPhoto } = useTelegram()
 
+const tgUsername = ref(userData.value ? userData.value.username : 'Неизвестный')
 const username = ref('')
 const trainings = ref([
+  {
+    tr_id: 1,
+    username: username,
+    tr_name: 'Пиво с утреца',
+    tr_sets: 5,
+    tr_count: 5,
+    tr_value: 1,
+    tr_measure: 'л'
+  },
+  {
+    tr_id: 1,
+    username: username,
+    tr_name: 'Пиво с утреца',
+    tr_sets: 5,
+    tr_count: 5,
+    tr_value: 1,
+    tr_measure: 'л'
+  },
+  {
+    tr_id: 1,
+    username: username,
+    tr_name: 'Пиво с утреца',
+    tr_sets: 5,
+    tr_count: 5,
+    tr_value: 1,
+    tr_measure: 'л'
+  },
+  {
+    tr_id: 1,
+    username: username,
+    tr_name: 'Пиво с утреца',
+    tr_sets: 5,
+    tr_count: 5,
+    tr_value: 1,
+    tr_measure: 'л'
+  },
   {
     tr_id: 1,
     username: username,
@@ -52,6 +89,7 @@ onMounted(() => {
 <template>
     <div class="title">
       <div v-if="username">Добро пожаловать, {{ username }}</div>
+      <div v-else-if="tgUsername">Добро пожаловать, {{ tgUsername }}</div>
       <div v-else>Добро пожаловать, пользователь</div>
     </div>
     <div>
@@ -66,7 +104,8 @@ onMounted(() => {
           <div class="user-block">
             <img v-if="userPhoto" class="user-photo":src="userPhoto">
             <div class="avatar-placeholder" v-else></div>
-            <div>{{ username }}</div>
+            <div v-if="username">{{ username }}</div>
+            <div v-else="tgUsername">{{ username }}</div>
           </div>
           <div>{{ item.tr_name }}</div>
         </div>

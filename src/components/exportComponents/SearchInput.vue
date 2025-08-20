@@ -16,7 +16,7 @@
     border-radius: 8px;
     outline: none;
     background-color: #f3f3f4;
-    color: var(--theme-color);
+    color: var(--dark-color);
     transition: .3s ease;
 }
 

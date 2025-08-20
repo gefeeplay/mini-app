@@ -6,6 +6,7 @@
   --light-color: white;
   --light-red-color:rgb(230, 55, 55);
   --dark-red-color:rgb(145, 78, 78);
+  
 }
 
 body {
@@ -29,7 +30,6 @@ body {
 }
 
 .navigation {
-  flex-shrink: 0;
   display: flex;
   position: fixed;
   bottom: 0;
@@ -38,6 +38,8 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background: var(--not-theme-color);
+  z-index: 1000;
 }
 
 .dark .navigation {
@@ -77,6 +79,7 @@ button {
 .light { 
   background: var(--light-color);
   --theme-color: var(--dark-color);
+  --not-theme-color: var(--light-color);
   --red-color: var(--light-red-color);
   color: var(--dark-color)
   
@@ -85,6 +88,7 @@ button {
 .dark { 
   background: var(--dark-color);
   --theme-color: var(--light-color);
+  --not-theme-color: var(--dark-color);
   --red-color: var(--dark-red-color);
   color: var(--light-color);
 }
