@@ -17,6 +17,10 @@ const myTrainings = computed(() =>
   userStore.trainingsWithUsername.filter(t => t.usernameStr === userStore.username)
 )
 
+function onDelete(id) {
+  userStore.removeTraining(id)
+}
+
 </script>
 
 <template>
@@ -34,43 +38,49 @@ const myTrainings = computed(() =>
             Добавить тренировку
             <span class="material-symbols-outlined">add_circle</span>
         </div>
-        <div class="tr-item" v-for="item in myTrainings" :key="item.tr_id">
-            <div class="tr-title tr-line">
-                <div class="user-block">
-                    <img v-if="userPhoto" class="user-photo" :src="userPhoto">
-                    <div v-else class="avatar-placeholder"></div>
-                    <div v-if="userStore.username">{{ item.usernameStr }}</div>
-                    <div v-else>{{ tgUsername }}</div>
-                </div>
-                <div>{{ item.tr_name }}</div>
-            </div>
-            <div class="tr-body">
-                <div class="tr-line">
-                    <div><img src="../assets\sort-numeric-alt-up-svgrepo-com.svg"
-                            style="height: 0.8rem;" />Подходов:</div>
-                    <div>{{ item.tr_sets }}</div>
-                </div>
-                <div class="tr-line">
-                    <div><img src="../assets\sort-numeric-alt-up-svgrepo-com.svg" style="height: 0.8rem;" />За
-                        подход:</div>
-                    <div>{{ item.tr_count }}</div>
-                </div>
-                <div class="tr-line">
-                    <div><img src="../assets/dumbbell-svgrepo-com.svg" style="height: 0.8rem;" />Рабочий вес/объем:
+        <transition-group name="list" tag="div" class="tr-items">
+            <div class="tr-item" v-for="item in myTrainings" :key="item.tr_id">
+                <div class="tr-title tr-line">
+                    <div class="user-block">
+                        <img v-if="userPhoto" class="user-photo" :src="userPhoto">
+                        <div v-else class="avatar-placeholder"></div>
+                        <div v-if="userStore.username">{{ item.usernameStr }}</div>
+                        <div v-else>{{ tgUsername }}</div>
                     </div>
-                    <div>{{ item.tr_value }}{{ item.tr_measure }}</div>
+                    <div>{{ item.tr_name }}</div>
                 </div>
-                <div class="tr-line">
-                    <div><img src="../assets/calculate-1-svgrepo-com.svg" style="height: 0.8rem;" />Общее
-                        количество:</div>
-                    <div>{{ item.tr_sets * item.tr_count }}</div>
+                <div class="tr-body">
+                    <div class="tr-line">
+                        <div><img src="../assets\sort-numeric-alt-up-svgrepo-com.svg"
+                                style="height: 0.8rem;" />Подходов:</div>
+                        <div>{{ item.tr_sets }}</div>
+                    </div>
+                    <div class="tr-line">
+                        <div><img src="../assets\sort-numeric-alt-up-svgrepo-com.svg" style="height: 0.8rem;" />За
+                            подход:</div>
+                        <div>{{ item.tr_count }}</div>
+                    </div>
+                    <div class="tr-line">
+                        <div><img src="../assets/dumbbell-svgrepo-com.svg" style="height: 0.8rem;" />Рабочий вес/объем:
+                        </div>
+                        <div>{{ item.tr_value }}{{ item.tr_measure }}</div>
+                    </div>
+                    <div class="tr-line">
+                        <div><img src="../assets/calculate-1-svgrepo-com.svg" style="height: 0.8rem;" />Общее
+                            количество:</div>
+                        <div>{{ item.tr_sets * item.tr_count }}</div>
+                    </div>
+                </div>
+                <div class="tr-btns">
+                    <button class="edit">
+                        <span class="material-symbols-outlined" style="color: var(--dark-color)">edit</span>
+                    </button>
+                    <button class="edit" @click="onDelete(item.tr_id)">
+                        <span class="material-symbols-outlined" style="color: var(--red-color)">delete</span>
+                    </button>
                 </div>
             </div>
-            <div class="tr-btns">
-                <button class="edit"><span class="material-symbols-outlined" style="color: var(--dark-color)">edit</span></button>
-                <button class="edit"><span class="material-symbols-outlined" style="color: var(--red-color)">delete</span></button>
-            </div>
-        </div>
+        </transition-group>
     </div>   
 </template>
 
@@ -103,15 +113,21 @@ const myTrainings = computed(() =>
     margin-top: 1rem;
 }
 
+.tr-items {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;          /* расстояние между карточками */
+  width: 100%;        /* чтобы .tr-item 80% считалось от ширины списка */
+}
+
 .tr-item {
     background: #fff;
     border-radius: 1rem;
     padding: 1rem 1.2rem;
     width: 80%;
     max-width: 400px;
-
-    /* тень для объема */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* тень для объема */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .tr-item:hover {
@@ -190,11 +206,32 @@ const myTrainings = computed(() =>
     align-items: center;
     justify-content: space-between;
     font-size: 1rem;
-    color: #333;
-    
+    color: #333;    
 }
 
 .tr-create .material-symbols-outlined {
     font-size: 24px;  
+}
+
+/* плавный переход при появлении/удалении */
+.list-enter-active, .list-leave-active {
+  transition: all 0.4s ease-in;
+}
+
+/* старт появления (снизу и прозрачный) */
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* конец ухода (сжатие и исчезновение) */
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+/* важное правило для плавного сдвига соседей */
+.list-move {
+  transition: transform 0.6s ease-in-out;
 }
 </style>

@@ -4,11 +4,6 @@ import { ref, computed, unref } from 'vue'
 export const useUserStore = defineStore('user', () => {
     const username = ref('')
 
-    /*
-    const userStore = useUserStore()
-    const trainings = createTrainings(userStore)
-    */
-
     const trainings = ref([
         {
             tr_id: 1,
@@ -82,6 +77,11 @@ export const useUserStore = defineStore('user', () => {
         })
     )
 
+    function removeTraining(id) {
+        const idx = trainings.value.findIndex(t => t.tr_id === id)
+        if (idx !== -1) trainings.value.splice(idx, 1)
+    }
+
     function setUsername(newName) {
         username.value = newName
         localStorage.setItem('username', newName)
@@ -91,5 +91,5 @@ export const useUserStore = defineStore('user', () => {
         const saved = localStorage.getItem('username')
         if (saved) username.value = saved
     }
-    return { username, trainings, setUsername, loadUsername, trainingsWithUsername }
+    return { username, trainings, setUsername, loadUsername, trainingsWithUsername, removeTraining }
 })
