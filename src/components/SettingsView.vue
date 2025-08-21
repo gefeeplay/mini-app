@@ -1,6 +1,7 @@
 <script setup>
-import { inject, ref, computed, onMounted, provide } from 'vue';
+import { inject, ref, computed, onMounted} from 'vue';
 import { useTelegram } from '../composables/useTelegram'
+import { useUserStore } from '../data/user'; 
 import ToggleSwitch from './exportComponents/ToggleSwitch.vue';
 import QrWindow from './QrWindow.vue';
 import ChangeProfile from './ChangeProfile.vue';
@@ -8,26 +9,21 @@ import ChangeProfile from './ChangeProfile.vue';
 const curTheme = inject('theme');
 
 const { userData } = useTelegram()
+const userStore = useUserStore()
+
 const userPhoto = computed(() => userData.value?.photo_url || null)
 
 const tgUsername = ref(userData.value ? userData.value.username : 'Неизвестный') /* имя в телеграмме*/
-const username = ref('') /* имя в приложении - изменяемое*/
-
-provide('username', username)
 
 const showQr = ref(false)
 const showEdit = ref(false)
 
 const saveUser = (newUsername) => {
-  username.value = newUsername
-  localStorage.setItem('username', newUsername)
+  userStore.setUsername(newUsername)
 }
 
 onMounted(() => {
-  const savedName = localStorage.getItem('username')
-  if (savedName) {
-    username.value = savedName
-  }
+  userStore.loadUsername()
 })
 
 </script>
@@ -39,7 +35,7 @@ onMounted(() => {
     <div class="settings">
         <div class="profile">
             <div>Профиль
-              <k v-if="username">{{ username }}</k>
+              <k v-if="userStore.username">{{ userStore.username }}</k>
               <k v-else>{{ tgUsername }}</k>
             </div>
             <div class="user-photo" v-if="userPhoto"><img :src="userPhoto"></div>

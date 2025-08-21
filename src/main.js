@@ -6,8 +6,11 @@ import SettingsView from './components/SettingsView.vue'
 import FeedView from './components/FeedView.vue'
 import FriendsView from './components/FriendsView.vue'
 import TrainingView from './components/TrainingView.vue'
+import { createPinia } from 'pinia'
 
 const app = createApp(App)
+
+const pinia = createPinia()
 
 const router = createRouter({
   history: createWebHistory(),
@@ -38,4 +41,7 @@ if (window.Telegram && window.Telegram.WebApp) {
   app.config.globalProperties.$tg = tg
 }
 
-app.use(router).mount('#app')
+app.use(router)
+app.use(pinia)
+
+app.mount('#app')

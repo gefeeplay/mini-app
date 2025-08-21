@@ -1,90 +1,23 @@
 <script setup>
-import { ref, onMounted, computed} from 'vue'
+import { useUserStore } from '../data/user'
+import { ref, onMounted} from 'vue'
 import { useTelegram } from '../composables/useTelegram'
 import SearchInput from './exportComponents/SearchInput.vue'
 
+const userStore = useUserStore()
 const { userData, userPhoto } = useTelegram()
 
 const tgUsername = ref(userData.value ? userData.value.username : 'Неизвестный')
-const username = ref('')
-const trainings = ref([
-  {
-    tr_id: 1,
-    username: username,
-    tr_name: 'Пиво с утреца',
-    tr_sets: 5,
-    tr_count: 1,
-    tr_value: 1,
-    tr_measure: 'л'
-  },
-  {
-    tr_id: 2,
-    username: 'User2',
-    tr_name: 'Пиво с утреца',
-    tr_sets: 5,
-    tr_count: 2,
-    tr_value: 1,
-    tr_measure: 'л'
-  },
-  {
-    tr_id: 3,
-    username: 'User3',
-    tr_name: 'Пиво с утреца',
-    tr_sets: 5,
-    tr_count: 3,
-    tr_value: 1,
-    tr_measure: 'л'
-  },
-  {
-    tr_id: 4,
-    username: username,
-    tr_name: 'Пиво с утреца',
-    tr_sets: 5,
-    tr_count: 4,
-    tr_value: 1,
-    tr_measure: 'л'
-  },
-  {
-    tr_id: 5,
-    username: username,
-    tr_name: 'Пиво с утреца',
-    tr_sets: 5,
-    tr_count: 6,
-    tr_value: 1,
-    tr_measure: 'л'
-  },
-  {
-    tr_id: 6,
-    username: username,
-    tr_name: 'Пиво с утреца',
-    tr_sets: 5,
-    tr_count: 6,
-    tr_value: 1,
-    tr_measure: 'л'
-  },
-  {
-    tr_id: 7,
-    username: username,
-    tr_name: 'Пиво с утреца',
-    tr_sets: 5,
-    tr_count: 7,
-    tr_value: 1,
-    tr_measure: 'л'
-  }
-]);
 
 onMounted(() => {
-  const savedName = localStorage.getItem('username')
-  if (savedName) {
-    username.value = savedName
-  }
+  userStore.loadUsername()
 })
 
 </script>
 
 <template>
     <div class="title">
-      <div v-if="username">Добро пожаловать, {{ username }}</div>
+      <div v-if="userStore.username">Добро пожаловать, {{ userStore.username }}</div>
       <div v-else-if="tgUsername">Добро пожаловать, {{ tgUsername }}</div>
       <div v-else>Добро пожаловать, пользователь</div>
     </div>
@@ -95,13 +28,13 @@ onMounted(() => {
       <SearchInput/> 
     </div>
     <div class="tr-list">
-      <div class="tr-item" v-for="item in trainings">
+      <div class="tr-item" v-for="item in userStore.trainingsWithUsername">
         <div class="tr-title tr-line">
           <div class="user-block">
             <img v-if="userPhoto" class="user-photo":src="userPhoto">
-            <div class="avatar-placeholder" v-else></div>
-            <div v-if="username">{{ item.username }}</div>
-            <!--<div v-else="tgUsername">{{ tgUsername }}</div>-->
+            <div v-else class="avatar-placeholder"></div>
+            <div v-if="userStore.username">{{ item.username }}</div>
+            <div v-else="tgUsername">{{ tgUsername }}</div>
           </div>
           <div>{{ item.tr_name }}</div>
         </div>
