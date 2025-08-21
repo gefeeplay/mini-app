@@ -105,12 +105,6 @@ onMounted(() => {
   font-weight: bold;
 }
 
-.edit {
-  position: fixed;
-  right: 32px;
-  cursor: pointer;
-}
-
 .theme {
   display: flex;
   justify-content: space-between;
@@ -139,4 +133,11 @@ onMounted(() => {
 button {
   cursor: pointer;
 }
+
+.edit {
+  position: fixed;
+  right: 32px;
+  cursor: pointer;
+}
+
 </style>

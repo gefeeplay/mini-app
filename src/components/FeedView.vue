@@ -33,7 +33,7 @@ onMounted(() => {
           <div class="user-block">
             <img v-if="userPhoto" class="user-photo":src="userPhoto">
             <div v-else class="avatar-placeholder"></div>
-            <div v-if="userStore.username">{{ item.username }}</div>
+            <div v-if="userStore.username">{{ item.usernameStr }}</div>
             <div v-else="tgUsername">{{ tgUsername }}</div>
           </div>
           <div>{{ item.tr_name }}</div>

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, unref } from 'vue'
 
 export const useUserStore = defineStore('user', () => {
     const username = ref('')
@@ -76,14 +76,11 @@ export const useUserStore = defineStore('user', () => {
     ])
 
     const trainingsWithUsername = computed(() =>
-    trainings.value.map(item => {
-        // если поле username нет, добавляем текущего пользователя
-        return {
-            ...item,
-            username: item.username || username.value || 'pizdec'
-        }
-    })
-)
+        trainings.value.map(t => {
+            const raw = t.username ?? username      // либо свой username, либо общий из стора
+            return { ...t, usernameStr: unref(raw) } // unref даёт строку
+        })
+    )
 
     function setUsername(newName) {
         username.value = newName
