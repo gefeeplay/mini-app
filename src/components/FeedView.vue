@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed} from 'vue'
 import { useTelegram } from '../composables/useTelegram'
 import SearchInput from './exportComponents/SearchInput.vue'
 
@@ -13,69 +13,65 @@ const trainings = ref([
     username: username,
     tr_name: 'Пиво с утреца',
     tr_sets: 5,
-    tr_count: 5,
+    tr_count: 1,
     tr_value: 1,
     tr_measure: 'л'
   },
   {
-    tr_id: 1,
-    username: username,
+    tr_id: 2,
+    username: 'User2',
     tr_name: 'Пиво с утреца',
     tr_sets: 5,
-    tr_count: 5,
+    tr_count: 2,
     tr_value: 1,
     tr_measure: 'л'
   },
   {
-    tr_id: 1,
-    username: username,
+    tr_id: 3,
+    username: 'User3',
     tr_name: 'Пиво с утреца',
     tr_sets: 5,
-    tr_count: 5,
+    tr_count: 3,
     tr_value: 1,
     tr_measure: 'л'
   },
   {
-    tr_id: 1,
+    tr_id: 4,
     username: username,
     tr_name: 'Пиво с утреца',
     tr_sets: 5,
-    tr_count: 5,
+    tr_count: 4,
     tr_value: 1,
     tr_measure: 'л'
   },
   {
-    tr_id: 1,
+    tr_id: 5,
     username: username,
     tr_name: 'Пиво с утреца',
     tr_sets: 5,
-    tr_count: 5,
+    tr_count: 6,
     tr_value: 1,
     tr_measure: 'л'
   },
   {
-    tr_id: 1,
+    tr_id: 6,
     username: username,
     tr_name: 'Пиво с утреца',
     tr_sets: 5,
-    tr_count: 5,
+    tr_count: 6,
     tr_value: 1,
     tr_measure: 'л'
   },
   {
-    tr_id: 1,
+    tr_id: 7,
     username: username,
     tr_name: 'Пиво с утреца',
     tr_sets: 5,
-    tr_count: 5,
+    tr_count: 7,
     tr_value: 1,
     tr_measure: 'л'
   }
 ]);
-
-function tr_total_count(item) {
-  return item.tr_sets * item.tr_count
-}
 
 onMounted(() => {
   const savedName = localStorage.getItem('username')
@@ -104,8 +100,8 @@ onMounted(() => {
           <div class="user-block">
             <img v-if="userPhoto" class="user-photo":src="userPhoto">
             <div class="avatar-placeholder" v-else></div>
-            <div v-if="username">{{ username }}</div>
-            <div v-else="tgUsername">{{ tgUsername }}</div>
+            <div v-if="username">{{ item.username }}</div>
+            <!--<div v-else="tgUsername">{{ tgUsername }}</div>-->
           </div>
           <div>{{ item.tr_name }}</div>
         </div>
@@ -124,7 +120,7 @@ onMounted(() => {
           </div>
           <div class="tr-line">
             <div><img src="../assets/calculate-1-svgrepo-com.svg" style="height: 0.8rem;"/>Общее количество:</div>
-            <div>{{ tr_total_count(item) }}</div>
+            <div>{{ item.tr_sets * item.tr_count }}</div>
           </div>
         </div>
       </div>

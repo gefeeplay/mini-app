@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref, computed, onMounted } from 'vue';
+import { inject, ref, computed, onMounted, provide } from 'vue';
 import { useTelegram } from '../composables/useTelegram'
 import ToggleSwitch from './exportComponents/ToggleSwitch.vue';
 import QrWindow from './QrWindow.vue';
@@ -12,6 +12,8 @@ const userPhoto = computed(() => userData.value?.photo_url || null)
 
 const tgUsername = ref(userData.value ? userData.value.username : 'Неизвестный') /* имя в телеграмме*/
 const username = ref('') /* имя в приложении - изменяемое*/
+
+provide('username', username)
 
 const showQr = ref(false)
 const showEdit = ref(false)
