@@ -2,7 +2,7 @@
 import { onMounted, provide, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import Navigation from './components/Navigation.vue'
-import LoginView from './views/LoginView.vue' // Импортируем компонент логина
+import LoginView from './components/LoginView.vue' // Импортируем компонент логина
 import { provideTelegram } from './composables/useTelegram'
 
 provideTelegram()
