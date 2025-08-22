@@ -5,7 +5,7 @@ import { useUserStore } from '../data/user.js'
 import { useTelegram } from '../composables/useTelegram.js'
 
 const userStore = useUserStore()
-const { userData, initDataRaw, initDataUnsafe } = useTelegram()
+const { userData } = useTelegram()
 const tgLoginValue = ref('')
 
 // Устанавливаем ID пользователя Telegram при загрузке компонента
@@ -59,8 +59,8 @@ async function login() {
 
 <template>
   <div class="login-container">
-    <div> initDataRaw: {{ initDataRaw }}</div>
-    <div> initDataUnsafe: {{ initDataUnsafe}}</div>
+    <!--<div> initDataRaw: {{ initDataRaw }}</div>-->
+    <!--<div> initDataUnsafe: {{ initDataUnsafe}}</div>-->
     <div>Нажимая кнопку 'Войти', приложение получит доступ к вашим открытым данным.<br>
       Ваши личные данные не пострадают
     </div>
