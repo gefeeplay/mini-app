@@ -14,7 +14,7 @@ export function provideTelegram() {
     tg.value.expand() // Раскрываем на весь экран
     userData.value = tg.value.initDataUnsafe?.user
     theme.value = tg.value.colorScheme
-    initDataRaw = tg.value.initData
+    initDataRaw.value = tg.value.initData
   }
 
   const userPhoto = computed(() => userData.value?.photo_url || null)
