@@ -44,8 +44,15 @@ async function login() {
     }
 
   } catch (e) {
-    console.error('Ошибка авторизации:', e)
-    alert('Ошибка авторизации: ' + (e.response?.data?.message || e.message))
+    console.error('Полная ошибка авторизации:', e)
+    
+    if (e.response?.status === 401) {
+      alert('Ошибка доступа: Неверный API ключ или настройки сервера')
+    } else if (e.code === 'NETWORK_ERROR') {
+      alert('Проблемы с сетью. Проверьте подключение к интернету')
+    } else {
+      alert('Ошибка авторизации: ' + (e.response?.data?.detail || e.message))
+    }
   }
 }
 </script>
