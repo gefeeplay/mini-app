@@ -52,7 +52,7 @@ async function login() {
 
 <template>
   <div class="login-container">
-    <div>Нажимая кнопку 'войти', приложение получит доступ к вашим открытым данным.<br>
+    <div>Нажимая кнопку 'Войти', приложение получит доступ к вашим открытым данным.<br>
       Ваши личные данные не пострадают
     </div>
     <p v-if="tgLoginValue">Ваш Telegram ID: {{ tgLoginValue }}</p>
@@ -63,12 +63,14 @@ async function login() {
 <style scoped>
 .login-container {
   display: flex;
+  background: var(--light-color);
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   height: 100vh;
   padding: 20px;
   text-align: center;
+  box-sizing: border-box;
 }
 
 button {
