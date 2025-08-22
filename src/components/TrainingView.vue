@@ -3,6 +3,7 @@ import { useUserStore } from '../data/user'
 import { ref, onMounted, computed } from 'vue'
 import { useTelegram } from '../composables/useTelegram'
 import SearchInput from './exportComponents/SearchInput.vue'
+import CreateTraining from './CreateTraining.vue'
 
 const userStore = useUserStore()
 const { userData, userPhoto } = useTelegram()
@@ -21,6 +22,8 @@ function onDelete(id) {
   userStore.removeTraining(id)
 }
 
+const showCreate = ref(false);
+
 </script>
 
 <template>
@@ -36,8 +39,15 @@ function onDelete(id) {
     <div class="tr-list">
         <div class="tr-create tr-item">
             Добавить тренировку
-            <span class="material-symbols-outlined">add_circle</span>
+            <button class="create" @click="showCreate = true">
+              <span class="material-symbols-outlined">add_circle</span>
+            </button>
         </div>
+        <CreateTraining
+        :show="showCreate"
+        @close="showCreate = false"
+        @create="addTraining"
+        />
         <transition-group name="list" tag="div" class="tr-items">
             <div class="tr-item" v-for="item in myTrainings" :key="item.tr_id">
                 <div class="tr-title tr-line">
@@ -211,6 +221,10 @@ function onDelete(id) {
 
 .tr-create .material-symbols-outlined {
     font-size: 24px;  
+}
+
+.create {
+  cursor: pointer;
 }
 
 /* плавный переход при появлении/удалении */

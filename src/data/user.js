@@ -77,6 +77,10 @@ export const useUserStore = defineStore('user', () => {
         })
     )
 
+    function addTraining(training) {
+        trainings.value.push(training)
+    }
+
     function removeTraining(id) {
         const idx = trainings.value.findIndex(t => t.tr_id === id)
         if (idx !== -1) trainings.value.splice(idx, 1)
@@ -91,5 +95,5 @@ export const useUserStore = defineStore('user', () => {
         const saved = localStorage.getItem('username')
         if (saved) username.value = saved
     }
-    return { username, trainings, setUsername, loadUsername, trainingsWithUsername, removeTraining }
+    return { username, trainings, setUsername, loadUsername, trainingsWithUsername, removeTraining, addTraining }
 })
