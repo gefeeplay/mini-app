@@ -51,7 +51,7 @@ async function login() {
 </script>
 
 <template>
-  <div>
+  <div class="login-container">
     <div>Нажимая кнопку 'войти', приложение получит доступ к вашим открытым данным.<br>
       Ваши личные данные не пострадают
     </div>
