@@ -8,6 +8,7 @@ export function provideTelegram() {
   const theme = ref('light')
   const tg = ref(null)
   const initDataRaw = ref(null)
+  const initDataUnsafe = ref(null)
 
   if (window.Telegram?.WebApp) {
     tg.value = window.Telegram.WebApp
@@ -15,6 +16,7 @@ export function provideTelegram() {
     userData.value = tg.value.initDataUnsafe?.user
     theme.value = tg.value.colorScheme
     initDataRaw.value = tg.value.initData
+    initDataUnsafe.value = tg.value.initDataUnsafe
   }
 
   const userPhoto = computed(() => userData.value?.photo_url || null)
@@ -24,7 +26,8 @@ export function provideTelegram() {
     theme,
     tg,
     userPhoto,
-    initDataRaw
+    initDataRaw,
+    initDataUnsafe
   })
 }
 
