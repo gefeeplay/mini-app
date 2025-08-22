@@ -59,8 +59,8 @@ async function login() {
 
 <template>
   <div class="login-container">
-    <div> {{ initDataUnsafe.value }}</div>
-    <div> {{ initDataRaw.value }}</div>
+    <div> initDataRaw: {{ initDataUnsafe.value }}</div>
+    <div> initDataUnsafe: {{ initDataRaw.value }}</div>
     <div>Нажимая кнопку 'Войти', приложение получит доступ к вашим открытым данным.<br>
       Ваши личные данные не пострадают
     </div>
