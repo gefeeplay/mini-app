@@ -8,14 +8,14 @@ const userStore = useUserStore()
 const { userData, initDataRaw } = useTelegram()
 
 onMounted(() => {
-  if (userData.value && userData.value.id) {
+  if (userData.value?.id) {
     tgLoginValue.value = userData.value.id
+    console.log('Telegram ID пользователя:', tgLoginValue.value)
   }
 })
 
 async function login() {
   try {
-    // Проверяем, что у нас есть ID для авторизации
     if (!initDataRaw) {
       alert('Не удалось получить данные пользователя Telegram')
       return
@@ -36,8 +36,11 @@ async function login() {
       userStore.setUsername(data.username)
     }
 
-    if (data.token) {
-      localStorage.setItem('token', data.token)
+    if (data.accessToken) {
+      localStorage.setItem('accessToken', data.accessToken)
+    }
+    if (data.refreshToken) {
+      localStorage.setItem('refreshToken', data.refreshToken)
     }
 
   } catch (e) {
@@ -56,7 +59,7 @@ async function login() {
 
 <template>
   <div class="login-container">
-    <!--<div> initDataRaw: {{ initDataRaw }}</div>-->
+    <div> initDataRaw: {{ initDataRaw }}</div>
     <!--<div> initDataUnsafe: {{ initDataUnsafe}}</div>-->
     <div>Нажимая кнопку 'Войти', приложение получит доступ к вашим открытым данным.<br>
       Ваши личные данные не пострадают

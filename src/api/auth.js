@@ -1,21 +1,24 @@
 import axios from 'axios'
 
 const API_URL = 'https://fitness-app-auth-api.fly.dev/api/auth'
+const API_KEY = 'your-super-secret-api-key'
 
-export async function tgLogin(tgLogin) {
+export async function tgLogin(initDataRaw) {
   try {
-    const response = await axios.post(`${API_URL}/tglogin`, {
-      tgLogin: tgLogin
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-API-KEY': 'your-super-secret-api-key'
+    const response = await axios.post(
+      `${API_URL}/tglogin`,
+      { initDataRaw }, // тело запроса
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-API-KEY': API_KEY,
+        },
       }
-    })
+    )
     return response.data
   } catch (error) {
-    console.error('Ошибка при логине через tgLogin:', error)
+    console.error('Ошибка при логине через tgLogin:', error.response || error)
     throw error
   }
 }
