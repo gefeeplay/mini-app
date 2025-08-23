@@ -94,4 +94,9 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+
+div{
+ width: 90%;
+  word-break: break-all;
+}
 </style>
