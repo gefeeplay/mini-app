@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 /*const API_URL = 'https://fitness-app-auth-api.fly.dev/api/auth'*/
-const API_URL = '/api/auth' /* url в vite.config.js - пока без CORS на бэке*/
+const API_URL = 'auth' /* url в vite.config.js - пока без CORS на бэке*/
 const API_KEY = 'your-super-secret-api-key'
 
 export async function tgLogin(initDataRaw) {
