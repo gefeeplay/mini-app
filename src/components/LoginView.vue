@@ -21,7 +21,7 @@ async function login() {
       return
     }
 
-    const data = await tgLogin(initDataRaw)
+    const data = await tgLogin(String(initDataRaw.value))
     /*console.log('Ответ сервера:', data)*/
 
     // Всплывающее окно с ответом сервера
