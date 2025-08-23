@@ -7,9 +7,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://fitness-app-auth-api.fly.dev', // адрес бэкенда
-        changeOrigin: true, // подменяет Origin на целевой
-        rewrite: (path) => path.replace(/^\/api/, '/api'), 
+        target: 'https://fitness-app-auth-api.fly.dev',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), 
       },
     },
   },
