@@ -5,27 +5,24 @@ import { useUserStore } from '../data/user.js'
 import { useTelegram } from '../composables/useTelegram.js'
 
 const userStore = useUserStore()
-const { userData } = useTelegram()
-const tgLoginValue = ref('')
+const { userData, initDataRaw } = useTelegram()
 
-// Устанавливаем ID пользователя Telegram при загрузке компонента
 onMounted(() => {
   if (userData.value && userData.value.id) {
     tgLoginValue.value = userData.value.id
-    console.log('Telegram ID пользователя:', tgLoginValue.value)
   }
 })
 
 async function login() {
   try {
     // Проверяем, что у нас есть ID для авторизации
-    if (!tgLoginValue.value) {
-      alert('Не удалось получить ID пользователя Telegram')
+    if (!initDataRaw) {
+      alert('Не удалось получить данные пользователя Telegram')
       return
     }
 
-    const data = await tgLogin(tgLoginValue.value)
-    console.log('Ответ сервера:', data)
+    const data = await tgLogin(initDataRaw)
+    /*console.log('Ответ сервера:', data)*/
 
     // Всплывающее окно с ответом сервера
     if (data.message) {
@@ -64,7 +61,6 @@ async function login() {
     <div>Нажимая кнопку 'Войти', приложение получит доступ к вашим открытым данным.<br>
       Ваши личные данные не пострадают
     </div>
-    <p v-if="tgLoginValue">Ваш Telegram ID: {{ tgLoginValue }}</p>
     <button @click="login">Войти</button>
   </div>
 </template>
