@@ -9,7 +9,8 @@ export async function tgLogin(tgLogin) {
     }, {
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'X-API-KEY': 'your-super-secret-api-key'
       }
     })
     return response.data
