@@ -6,6 +6,9 @@ import { useTelegram } from '../composables/useTelegram.js'
 
 const userStore = useUserStore()
 const { userData, initDataRaw } = useTelegram()
+const fakeInitData = "user=%7B%22id%22%3A1%2C%22first_name%22%3A%22Test%22%2C%22last_name%22%3A%22User%22%2C%22username%22%3A%22testuser%22%2C%22language_code%22%3A%22en%22%7D&auth_date=1755960241&hash=fakehash";
+
+/*const initDataRaw = fakeInitData*/
 
 onMounted(() => {
   if (userData.value?.id) {
@@ -21,7 +24,7 @@ async function login() {
       return
     }
 
-    const data = await tgLogin(String(initDataRaw.value))
+    const data = await tgLogin(initDataRaw)
     /*console.log('Ответ сервера:', data)*/
 
     // Всплывающее окно с ответом сервера
