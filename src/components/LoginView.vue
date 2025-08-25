@@ -68,7 +68,7 @@ async function login() {
 <template>
   <div class="login-container">
     <div>Нажимая кнопку 'Войти', приложение получит доступ к вашим открытым данным.<br>
-      Ваши личные данные не пострадают
+      Ваши личные данные не пострадают.
     </div>
     <button @click="login">Войти</button>
   </div>
@@ -102,6 +102,6 @@ button:hover {
 }
 
 div{
-  word-break: break-all;
+  white-space: pre-line;
 }
 </style>
