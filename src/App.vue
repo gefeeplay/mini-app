@@ -20,9 +20,6 @@ provide('theme', {
 // Предоставляем функцию для установки авторизации
 provide('setAuthenticated', (value) => {
   isAuthenticated.value = value
-  if (value) {
-    router.push('/') // Перенаправляем на главную после авторизации
-  }
 })
 
 // Проверяем, есть ли токен при загрузке

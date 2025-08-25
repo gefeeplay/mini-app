@@ -109,11 +109,12 @@ function saveTraining() {
     align-items: center;
     gap: 0.5rem;
     text-align: left;
+    color: var(--dark-color)
     
 }
 .modal-text {
   padding: 0.5rem;
-  border: 1px solid var(--theme-color);
+  border: 1px solid var(--dark-color);
   border-radius: 5px;
 }
 
