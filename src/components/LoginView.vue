@@ -67,8 +67,6 @@ async function login() {
 
 <template>
   <div class="login-container">
-    <div> initDataRaw: {{ String(initDataRaw) }}</div>
-    <!--<div> initDataUnsafe: {{ initDataUnsafe}}</div>-->
     <div>Нажимая кнопку 'Войти', приложение получит доступ к вашим открытым данным.<br>
       Ваши личные данные не пострадают
     </div>
@@ -104,7 +102,6 @@ button:hover {
 }
 
 div{
- width: 90%;
   word-break: break-all;
 }
 </style>
