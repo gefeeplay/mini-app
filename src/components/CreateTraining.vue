@@ -105,7 +105,7 @@ function saveTraining() {
 .str {
     display: grid;
     grid-template-columns: 120px 1fr;
-    width: 90%;
+    width: 95%;
     align-items: center;
     gap: 0.5rem;
     text-align: left;
@@ -113,6 +113,9 @@ function saveTraining() {
     
 }
 .modal-text {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 0.5rem;
   border: 1px solid var(--dark-color);
   border-radius: 5px;
