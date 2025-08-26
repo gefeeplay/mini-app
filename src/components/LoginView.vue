@@ -5,10 +5,10 @@ import { useUserStore } from '../data/user.js'
 import { useTelegram } from '../composables/useTelegram.js'
 
 const userStore = useUserStore()
-const { userData, /*initDataRaw*/ } = useTelegram()
+const { userData, initDataRaw } = useTelegram()
 const fakeInitData = "user=%7B%22id%22%3A909844183%2C%22first_name%22%3A%22Miska%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22gefeeRu%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2F2cXXMBKksn2jvadNJFGJLUMjCLWWa6wcUhCZPT962M8.svg%22%7D&chat_instance=-6139284978316757086&chat_type=sender&auth_date=1755960241&signature=aA673g3WFjZ7Mu1-8HhKTZfIaPye5lxYnf44Dgmjtmnbv9YEP3ihlhxTivVoZp1Pm0wJVZhMlJYqdNy2A1_CAw&hash=63bbaca6ddc2c8c6be6a4f8c130ec401b0838b8723390a5aaec07c375dea2af3";
 
-const initDataRaw = fakeInitData
+/*const initDataRaw = fakeInitData*/
 
 const setAuthenticated = inject('setAuthenticated')
 
@@ -47,6 +47,9 @@ async function login() {
     if (data.refreshToken) {
       localStorage.setItem('refreshToken', data.refreshToken)
     }
+    // Записываем дату входа (в миллисекундах)
+    localStorage.setItem('loginDate', Date.now().toString())
+
     if (setAuthenticated) {
       setAuthenticated(true)
     }

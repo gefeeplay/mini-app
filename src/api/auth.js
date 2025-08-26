@@ -6,7 +6,7 @@ const API_KEY = 'your-super-secret-api-key'
 const headers = {
   'Content-Type': 'application/json',
   'Accept': 'application/json',
-  'X-API-KEY': API_KEY
+  /*'X-API-KEY': API_KEY*/
 }
 
 export async function tgLogin(initDataRaw) {

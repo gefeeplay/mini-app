@@ -1,74 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref, computed, unref } from 'vue'
+import axios from 'axios'
+
+const API_URL = 'https://fitness-app-workout-api.fly.dev/api/Workout'
+const REFRESH_URL = 'https://fitness-app-auth-api.fly.dev/api/auth/refresh'
 
 export const useUserStore = defineStore('user', () => {
     const username = ref('')
-
-    const trainings = ref([
-        {
-            tr_id: 1,
-            /*username,*/
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 1,
-            tr_value: 1,
-            tr_measure: 'л'
-        },
-        {
-            tr_id: 2,
-            username: ref('User2'),
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 2,
-            tr_value: 1,
-            tr_measure: 'л'
-        },
-        {
-            tr_id: 3,
-            username: ref('User3'),
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 3,
-            tr_value: 1,
-            tr_measure: 'л'
-        },
-        {
-            tr_id: 4,
-            /*username,*/
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 4,
-            tr_value: 1,
-            tr_measure: 'л'
-        },
-        {
-            tr_id: 5,
-            /*username,*/
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 6,
-            tr_value: 1,
-            tr_measure: 'л'
-        },
-        {
-            tr_id: 6,
-            /*username,*/
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 6,
-            tr_value: 1,
-            tr_measure: 'л'
-        },
-        {
-            tr_id: 7,
-            /*username,*/
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 7,
-            tr_value: 1,
-            tr_measure: 'л'
-        }
-    ])
+    const trainings = ref([])
+    const loading = ref(false)
+    const error = ref(null)
 
     const trainingsWithUsername = computed(() =>
         trainings.value.map(t => {
@@ -76,6 +17,73 @@ export const useUserStore = defineStore('user', () => {
             return { ...t, usernameStr: unref(raw) } // unref даёт строку
         })
     )
+
+    function getAccessToken() {
+        return localStorage.getItem('accessToken')
+    }
+
+    function getRefreshToken() {
+        return localStorage.getItem('refreshToken')
+    }
+
+    async function refreshAccessToken() {
+        try {
+            const response = await axios.post(REFRESH_URL, {
+                refreshToken: getRefreshToken(),
+            })
+            if (response.data?.accessToken) {
+                localStorage.setItem('accessToken', response.data.accessToken)
+                
+                // Обновляем loginDate при успешном обновлении токена
+                localStorage.setItem('loginDate', Date.now().toString())
+
+                return response.data.accessToken
+            }
+            throw new Error('Не удалось обновить токен')       
+        } catch (e) {
+            console.error('Ошибка обновления токена:', e)
+            alert('Не удалось обновить токен', e)
+            throw e
+        }
+    }
+
+
+    async function fetchTrainings() {
+        loading.value = true
+        error.value = null
+        try {
+        const response = await axios.get(API_URL, {
+            headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${getAccessToken()}`,
+            },
+        })
+        trainings.value = response.data || []
+        } catch (e) {
+        if (e.response?.status === 401) {
+            alert('Срок сессии истек, получение доступа...')
+            // access token истёк → пробуем обновить
+            try {
+            const newToken = await refreshAccessToken()
+            const retry = await axios.get(API_URL, {
+                headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${newToken}`,
+                },
+            })
+            trainings.value = retry.data || []
+            } catch (refreshError) {
+            error.value = refreshError
+            }
+        } else {
+            console.error('Ошибка загрузки тренировок:', e)
+            alert('Ошибка загрузки тренировок:', e)
+            error.value = e
+        }
+        } finally {
+        loading.value = false
+        }
+    }
 
     function addTraining(training) {
         trainings.value.push(training)
@@ -95,5 +103,17 @@ export const useUserStore = defineStore('user', () => {
         const saved = localStorage.getItem('username')
         if (saved) username.value = saved
     }
-    return { username, trainings, setUsername, loadUsername, trainingsWithUsername, removeTraining, addTraining }
+
+    return {
+        username,
+        trainings,
+        trainingsWithUsername,
+        loading,
+        error,
+        fetchTrainings,
+        addTraining,
+        removeTraining,
+        setUsername,
+        loadUsername,
+    }
 })
