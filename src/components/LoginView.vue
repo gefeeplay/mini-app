@@ -28,7 +28,7 @@ async function login() {
       return
     }
 
-    const data = await tgLogin(String(initDataRaw))
+    const data = await tgLogin(initDataSend)
     /*console.log('Ответ сервера:', data)*/
 
     // Всплывающее окно с ответом сервера
@@ -71,8 +71,6 @@ async function login() {
 </script>
 
 <template>
-  <div>initDataRaw: {{ String(initDataRaw) }}</div>
-  <div> initDataRaw.value: {{ initDataSend }}</div>
   <div class="login-container">
     <div>Нажимая кнопку 'Войти', приложение получит доступ к вашим открытым данным.<br>
       Ваши личные данные не пострадают.
