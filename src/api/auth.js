@@ -1,8 +1,7 @@
 import axios from 'axios'
 
 const API_URL = 'https://fitness-app-auth-api.fly.dev/api/auth'
-/*const API_URL = 'auth' /* url в vite.config.js - пока без CORS на бэке*/
-const API_KEY = 'your-super-secret-api-key'
+const API_KEY = 'your-super-secret-api-key' 
 const headers = {
   'Content-Type': 'application/json',
   'Accept': 'application/json',
