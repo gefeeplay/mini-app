@@ -10,6 +10,8 @@ const fakeInitData = "user=%7B%22id%22%3A909844183%2C%22first_name%22%3A%22Miska
 
 /*const initDataRaw = fakeInitData*/
 
+const initDataSend = String(initDataRaw.value)
+
 const setAuthenticated = inject('setAuthenticated')
 
 onMounted(() => {
@@ -26,7 +28,7 @@ async function login() {
       return
     }
 
-    const data = await tgLogin(initDataRaw)
+    const data = await tgLogin(String(initDataRaw))
     /*console.log('Ответ сервера:', data)*/
 
     // Всплывающее окно с ответом сервера
@@ -70,6 +72,7 @@ async function login() {
 
 <template>
   <div>initDataRaw: {{ String(initDataRaw) }}</div>
+  <div> initDataRaw.value: {{ initDataSend }}</div>
   <div class="login-container">
     <div>Нажимая кнопку 'Войти', приложение получит доступ к вашим открытым данным.<br>
       Ваши личные данные не пострадают.
