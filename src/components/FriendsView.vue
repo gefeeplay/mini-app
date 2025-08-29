@@ -107,6 +107,7 @@ const friends = ref([
   font-weight: 600;
   font-size: 1rem;
   text-align: left;
+  color: var(--dark-color);
 }
 
 .date {
