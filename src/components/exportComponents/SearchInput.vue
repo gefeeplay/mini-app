@@ -65,13 +65,6 @@ input[type="search"]::-webkit-search-results-decoration {
     appearance: none;
 }
 
-/*
-input[type="search"]::-ms-clear,
-input[type="search"]::-ms-reveal {
-  display: none !important;
-  width: 0;
-  height: 0;
-}*/
 </style>
 
 <template>

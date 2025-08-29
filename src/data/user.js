@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import { ref, computed, unref } from 'vue'
 import axios from 'axios'
 
-const API_URL = 'https://fitness-app-workout-api.fly.dev/api/Workout'
-const REFRESH_URL = 'https://fitness-app-auth-api.fly.dev/api/auth/refresh'
+const API_URL = 'https://gainly.site/workout/api/Workout/workouList'
+const REFRESH_URL = 'https://gainly.site/auth/api/auth/refresh'
 
 export const useUserStore = defineStore('user', () => {
     const username = ref('')

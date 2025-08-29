@@ -1,11 +1,9 @@
 import axios from 'axios'
 
-const API_URL = 'https://fitness-app-auth-api.fly.dev/api/auth'
-const API_KEY = 'your-super-secret-api-key' 
+const API_URL = 'https://gainly.site/auth/api/auth'
 const headers = {
   'Content-Type': 'application/json',
   'Accept': 'application/json',
-  /*'X-API-KEY': API_KEY*/
 }
 
 export async function tgLogin(initDataRaw) {
