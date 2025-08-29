@@ -30,7 +30,7 @@ const showCreate = ref(false);
     <div class="title">
         Тренировки
     </div>
-    <div class="input">
+    <div class="search-input">
         <SearchInput />
     </div>
     <div class="def-text">
@@ -102,12 +102,6 @@ const showCreate = ref(false);
   margin: 1rem;
   text-align: center;
   color: var(--theme-color, #0088cc);
-}
-.input {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 10px;
 }
 
 .def-text {

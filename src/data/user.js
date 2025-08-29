@@ -5,11 +5,30 @@ import axios from 'axios'
 const API_URL = 'https://gainly.site/workout/api/Workout/workouList'
 const REFRESH_URL = 'https://gainly.site/auth/api/auth/refresh'
 
+const date = new Date();
+const day = String(date.getDate()).padStart(2, '0'); 
+const month = String(date.getMonth() + 1).padStart(2, '0');
+const year = date.getFullYear();
+
+const dateFromAdd = `${day}.${month}.${year}`; 
+
 export const useUserStore = defineStore('user', () => {
     const username = ref('')
     const trainings = ref([])
     const loading = ref(false)
     const error = ref(null)
+    const friends = ref([
+    {
+        username: 'Miska',
+        photo_url: 'https://t.me/i/userpic/320/2cXXMBKksn2jvadNJFGJLUMjCLWWa6wcUhCZPT962M8.svg',
+        date: dateFromAdd
+    },
+    {
+        username: 'Alex',
+        photo_url: '',
+        date: '20.08.2025'
+    }
+]);
 
     const trainingsWithUsername = computed(() =>
         trainings.value.map(t => {
@@ -110,6 +129,7 @@ export const useUserStore = defineStore('user', () => {
         trainingsWithUsername,
         loading,
         error,
+        friends,
         fetchTrainings,
         addTraining,
         removeTraining,

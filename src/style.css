@@ -93,3 +93,30 @@ button {
   color: var(--light-color);
 }
 
+.search-input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5%;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 1rem;
+  text-align: center;
+  color: var(--theme-color);
+}
+
+.back-btn {
+  position: absolute;
+  left: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 0.5rem;
+  display: flex;
+  align-items: center;
+}

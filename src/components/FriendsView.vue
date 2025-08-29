@@ -1,47 +1,30 @@
 <script setup>
 import { ref } from 'vue'
 import SearchInput from './exportComponents/SearchInput.vue';
+import { useUserStore } from '../data/user'
 
-const username = ''
-const photo_url = ''
+const userStore = useUserStore()
 
-
-const date = new Date();
-const day = String(date.getDate()).padStart(2, '0'); 
-const month = String(date.getMonth() + 1).padStart(2, '0');
-const year = date.getFullYear();
-
-const dateFromAdd = `${day}.${month}.${year}`; 
-
-const friends = ref([
-    {
-        username: 'Miska',
-        photo_url: 'https://t.me/i/userpic/320/2cXXMBKksn2jvadNJFGJLUMjCLWWa6wcUhCZPT962M8.svg',
-        date: dateFromAdd
-    },
-    {
-        username: 'Alex',
-        photo_url: '',
-        date: '20.08.2025'
-    }
-]);
 </script>
 
 <template>
     <div class="title">
         Друзья
     </div>
-    <div class="input">
+    <div class="search-input search-cont">
         <SearchInput/>
-        <button class="create" @click="showCreate = true">
-              <span class="material-symbols-outlined">add_circle</span>
+        <button class="create" @click="$router.push('/friends/find')">
+          <span class="material-symbols-outlined">add_circle</span>
+        </button>
+        <button class="create" @click="$router.push('/friends/requests')">
+          <span class="material-symbols-outlined">notifications</span>
         </button>
     </div>
     <div class="fr-list">
-        <div class="friend-card" v-for="friend in friends" :key="friend.username">
+        <div class="friend-card" v-for="friend in userStore.friends" :key="friend.username">
             <img :src="friend.photo_url || 'https://via.placeholder.com/50'" 
-                alt="avatar" 
-                class="avatar"
+            alt="avatar" 
+            class="avatar"
             />
             <div class="info">
                 <div class="username">{{ friend.username }}</div>
@@ -54,20 +37,19 @@ const friends = ref([
 </template>
 
 <style scoped>
-.input {
+
+.search-cont{
   display: flex;
-  justify-content: center;
   align-items: center;
-  margin: 5%;
-  gap: 1rem;
 }
 
 .create {
   cursor: pointer;
+  height: 1.5rem;
 }
 
 .fr-list{
-    padding: 0 10%;
+    padding: 0 5%;
     display: flex;
     flex-direction: column;
     justify-content: center;

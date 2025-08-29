@@ -6,6 +6,8 @@ import SettingsView from './components/SettingsView.vue'
 import FeedView from './components/FeedView.vue'
 import FriendsView from './components/FriendsView.vue'
 import TrainingView from './components/TrainingView.vue'
+import FindFriends from './components/FindFriends.vue'
+import FriendsRequests from './components/FriendsRequests.vue'
 import { createPinia } from 'pinia'
 
 const app = createApp(App)
@@ -26,6 +28,14 @@ const router = createRouter({
     name: 'Friends',
     path: '/friends',
     component: FriendsView
+  },{
+    name: 'Find',
+    path: '/friends/find', 
+    component: FindFriends
+  },{
+    name: 'FriendsRequests',
+    path: '/friends/requests', 
+    component: FriendsRequests
   },{
     name: 'Settings',
     path: '/settings',
