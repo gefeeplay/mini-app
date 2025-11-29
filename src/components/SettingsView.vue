@@ -1,5 +1,6 @@
 <script setup>
 import { inject, ref, computed, onMounted} from 'vue';
+import { useRouter } from 'vue-router'
 import { useTelegram } from '../composables/useTelegram'
 import { useUserStore } from '../data/user'; 
 import ToggleSwitch from './exportComponents/ToggleSwitch.vue';
@@ -7,9 +8,11 @@ import QrWindow from './QrWindow.vue';
 import ChangeProfile from './ChangeProfile.vue';
 
 const curTheme = inject('theme');
+const setAuthenticated = inject('setAuthenticated')
 
 const { userData } = useTelegram()
 const userStore = useUserStore()
+const router = useRouter()
 
 const userPhoto = computed(() => userData.value?.photo_url || null)
 
@@ -25,6 +28,19 @@ const saveUser = (newUsername) => {
 onMounted(() => {
   userStore.loadUsername()
 })
+
+/* Функия выхода */
+const logout = () => {
+  // Очистить localStorage
+  localStorage.clear()
+
+  // Перенаправить на главную страницу
+  router.push('/')
+
+  if (setAuthenticated) {
+    setAuthenticated(false) // для App.vue
+  }
+}
 
 </script>
 
@@ -54,7 +70,7 @@ onMounted(() => {
           <button @click="showQr = true"><span class="material-symbols-outlined">share</span></button>
           <QrWindow :bot-username="'gefeeminiappbot'" :show="showQr" @close="showQr = false" />
         </div>
-        <div class="exit">Выйти</div>
+        <div class="exit" @click="logout">Выйти</div>
     </div>
 </template>
 
@@ -120,8 +136,15 @@ onMounted(() => {
 
 .exit {
   background: var(--red-color);
+  text-align: center;
   cursor: pointer;
+  transition: 0.2s;
 }
+
+.exit:hover {
+  opacity: 0.8;
+}
+
 
 .share {
   text-align: start;

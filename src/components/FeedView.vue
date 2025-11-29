@@ -24,7 +24,7 @@ onMounted(() => {
     <div>
         Лента
     </div>
-    <div class="input">
+    <div class="search-input">
       <SearchInput/> 
     </div>
     <div class="tr-list">
@@ -61,20 +61,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin: 1rem;
-  text-align: center;
-  color: var(--theme-color, #0088cc);
-}
-
-.input {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 10px;
-}
 
 .tr-list {
   display: flex;

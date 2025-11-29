@@ -1,84 +1,88 @@
 import { defineStore } from 'pinia'
 import { ref, computed, unref } from 'vue'
+import { refreshAccessToken } from '../api/auth.js'
+import { fetchTrainings as apiFetchTrainings } from '../api/workout.js'
+
+// 15 минут в миллисекундах
+const REFRESH_INTERVAL = 15 * 60 * 1000
 
 export const useUserStore = defineStore('user', () => {
     const username = ref('')
+    const trainings = ref([])
+    const loading = ref(false)
+    const error = ref(null)
+    const autoRefreshStarted = ref(false) // чтобы не запускалось дважды
 
-    const trainings = ref([
-        {
-            tr_id: 1,
-            /*username,*/
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 1,
-            tr_value: 1,
-            tr_measure: 'л'
-        },
-        {
-            tr_id: 2,
-            username: ref('User2'),
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 2,
-            tr_value: 1,
-            tr_measure: 'л'
-        },
-        {
-            tr_id: 3,
-            username: ref('User3'),
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 3,
-            tr_value: 1,
-            tr_measure: 'л'
-        },
-        {
-            tr_id: 4,
-            /*username,*/
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 4,
-            tr_value: 1,
-            tr_measure: 'л'
-        },
-        {
-            tr_id: 5,
-            /*username,*/
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 6,
-            tr_value: 1,
-            tr_measure: 'л'
-        },
-        {
-            tr_id: 6,
-            /*username,*/
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 6,
-            tr_value: 1,
-            tr_measure: 'л'
-        },
-        {
-            tr_id: 7,
-            /*username,*/
-            tr_name: 'Пиво с утреца',
-            tr_sets: 5,
-            tr_count: 7,
-            tr_value: 1,
-            tr_measure: 'л'
-        }
+    const friends = ref([
+        { username: 'Miska', photo_url: '', date: '20.01.2025' },
+        { username: 'Alex', photo_url: '', date: '20.08.2025' }
     ])
 
     const trainingsWithUsername = computed(() =>
         trainings.value.map(t => {
-            const raw = t.username ?? username      // либо свой username, либо общий из стора
-            return { ...t, usernameStr: unref(raw) } // unref даёт строку
+            const raw = t.username ?? username
+            return { ...t, usernameStr: unref(raw) }
         })
     )
 
-    function addTraining(training) {
-        trainings.value.push(training)
+    // ---- TOKEN FUNCS ----
+    function getAccessToken() {
+        return localStorage.getItem('accessToken')
+    }
+
+    function getRefreshToken() {
+        return localStorage.getItem('refreshToken')
+    }
+
+    // ---- 🔄 АВТО-ОБНОВЛЕНИЕ КАЖДЫЕ 15 МИН ----
+    function startAutoRefreshToken() {
+        if (autoRefreshStarted.value) return;
+
+        autoRefreshStarted.value = true;
+        console.log("Автообновление токена запущено");
+
+        setInterval(async () => {
+            const loginDateStr = localStorage.getItem("loginDate");
+
+            if (!loginDateStr) {
+                console.warn("loginDate отсутствует, пропускаем автообновление");
+                return;
+            }
+
+            const loginDate = Number(loginDateStr);
+            const now = Date.now();
+
+            const diffMinutes = (now - loginDate) / 1000 / 60;
+
+            console.log(`⏱ Время после loginDate: ${diffMinutes.toFixed(1)} мин`);
+
+            // Если прошло >= 15 минут → обновляем токен
+            if (diffMinutes >= 15) {
+                console.log("⏳ Прошло больше 15 минут — обновляем токен...");
+                await refreshAccessToken();
+            }
+            
+        }, 60 * 1000); // проверяем каждую минуту
+    }
+
+    // ---- FETCH TRAININGS ----
+    async function fetchTrainings() {
+        loading.value = true
+        error.value = null
+
+        try {
+            const data = await apiFetchTrainings()
+            trainings.value = data
+
+        } catch (e) {
+            error.value = e
+        } finally {
+            loading.value = false
+        }
+    }
+
+    function addTraining(t) {
+        trainings.value.push(t)
     }
 
     function removeTraining(id) {
@@ -95,5 +99,26 @@ export const useUserStore = defineStore('user', () => {
         const saved = localStorage.getItem('username')
         if (saved) username.value = saved
     }
-    return { username, trainings, setUsername, loadUsername, trainingsWithUsername, removeTraining, addTraining }
+
+    return {
+        username,
+        trainings,
+        trainingsWithUsername,
+        friends,
+        loading,
+        error,
+
+        // токены/логика
+        getAccessToken,
+        getRefreshToken,
+        refreshAccessToken,
+        startAutoRefreshToken,
+
+        // действия
+        fetchTrainings,
+        addTraining,
+        removeTraining,
+        setUsername,
+        loadUsername,
+    }
 })
