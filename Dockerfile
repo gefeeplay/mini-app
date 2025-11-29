@@ -17,7 +17,7 @@ RUN npm run build
 
 
 # Stage 2: Production server
-FROM node:22-slim as production-stage
+FROM node:22 as production-stage
 
 WORKDIR /app
 
@@ -33,4 +33,4 @@ USER appuser
 
 EXPOSE 8080
 
-CMD ["serve", "-s", "dist", "-l", "8080"]
+CMD ["serve", "dist", "-l", "8080"]
