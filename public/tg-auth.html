@@ -32,14 +32,7 @@
     <script>
       function onTelegramAuth(user) {
         Android.onTelegramAuth(JSON.stringify(user));
-      }
-
-      // Автоматический редирект для /tg-auth
-      if (window.location.pathname === '/tg-auth' || 
-          window.location.pathname === '/tg-auth/') {
-        window.location.href = '/tg-auth.html'
-      }
-    
+      }  
     </script>
   </body>
 </html>
