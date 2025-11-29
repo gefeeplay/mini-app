@@ -1,9 +1,9 @@
 <script setup>
 import { ref, watch } from 'vue';
-import SearchInput from './exportComponents/SearchInput.vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../data/user';
-import { getUsers } from '../api/friend';
+import { getUsers, sendFriendRequest } from '../api/friend';
+import SearchInput from './exportComponents/SearchInput.vue';
 
 const router = useRouter()
 function goBack() { router.push('/friends') }
@@ -12,6 +12,7 @@ const userStore = useUserStore();
 
 const searchQuery = ref("");
 const foundUsers = ref([]);
+const loadingRequests = ref(new Set()); // для отслеживания отправляемых запросов
 
 // --- ДЕБАУНС ПО КОЛИЧЕСТВУ СИМВОЛОВ: 3, 6, 9... ---
 watch(searchQuery, async (val) => {
@@ -31,6 +32,41 @@ watch(searchQuery, async (val) => {
         console.error("Ошибка API:", e);
     }
 });
+
+// --- ОТПРАВКА ЗАПРОСА В ДРУЗЬЯ ---
+async function handleSendRequest(user) {
+    if (!user || !user.username) {
+        console.error("Некорректный пользователь");
+        return;
+    }
+
+    // Добавляем username в набор загрузки
+    loadingRequests.value.add(user.username);
+
+    try {
+        await sendFriendRequest(user.username, userStore.getAccessToken());
+        console.log(`Запрос на добавление отправлен пользователю ${user.username}`);
+        
+        // Можно добавить уведомление об успехе
+        alert(`Запрос в друзья отправлен пользователю ${user.username}`);
+        
+        // Опционально: обновить список, убрать пользователя или изменить его статус
+        // user.status = 'request_sent';
+        
+    } catch (error) {
+        console.error(`Ошибка при отправке запроса пользователю ${user.username}:`, error);
+        const errorMessage = error.response?.data?.detail || error.message;
+        alert(`Ошибка при отправке запроса: ${errorMessage}`);
+    } finally {
+        // Убираем username из набора загрузки
+        loadingRequests.value.delete(user.username);
+    }
+}
+
+// Проверка, отправляется ли сейчас запрос для данного пользователя
+function isSendingRequest(user) {
+    return loadingRequests.value.has(user.username);
+}
 </script>
 
 <template>
@@ -61,9 +97,16 @@ watch(searchQuery, async (val) => {
             </div>
         </div>
 
-          <button>
-            <img src="../assets\add-ellipse-svgrepo-com.svg"
-                 style="height: 1.5rem;" />
+          <button 
+            @click="handleSendRequest(user)"
+            :disabled="isSendingRequest(user)"
+            :class="{ 'loading': isSendingRequest(user) }">
+            <img 
+              v-if="!isSendingRequest(user)"
+              src="../assets/add-ellipse-svgrepo-com.svg"
+              style="height: 1.5rem;" 
+              alt="Добавить в друзья" />
+            <span v-else class="loading-spinner">⏳</span>
           </button>
       </div>
   </div>

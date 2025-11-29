@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const BASE_URL = 'https://gainly.site/auth/api/friends';
+
 export async function getUsers(nickname, token) {
-  const url = `https://gainly.site/auth/api/friends/get-users?nickname=${encodeURIComponent(nickname)}`;
+  const url = `${BASE_URL}/get-users?nickname=${encodeURIComponent(nickname)}`;
 
   try {
     const response = await axios.get(url, {
@@ -24,4 +26,17 @@ export async function getUsers(nickname, token) {
       throw new Error(`Request error: ${error.message}`);
     }
   }
+}
+
+export async function sendFriendRequest(username, token) {
+  const url = `${BASE_URL}/send-request-by-username/${encodeURIComponent(username)}`;
+
+  const response = await axios.post(url, {}, {
+    headers: {
+      accept: 'text/plain',
+      Authorization: `Bearer ${token || ''}`
+    }
+  });
+  
+  return response.data;
 }
