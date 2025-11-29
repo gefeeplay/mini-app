@@ -22,9 +22,9 @@ const userStore = useUserStore()
     </div>
     <div class="fr-list">
         <div class="friend-card" v-for="friend in userStore.friends" :key="friend.username">
-            <img :src="friend.photo_url || 'https://via.placeholder.com/50'" 
-            alt="avatar" 
-            class="avatar"
+            <div class="avatar">
+              <span class="material-symbols-outlined" style="color: black; font-size: 2rem;">account_circle</span>
+            </div>
             />
             <div class="info">
                 <div class="username">{{ friend.username }}</div>

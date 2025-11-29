@@ -3,6 +3,7 @@ import { onMounted, provide, ref, computed } from 'vue'
 import Navigation from './components/Navigation.vue'
 import LoginView from './components/LoginView.vue' // Импортируем компонент логина
 import { provideTelegram } from './composables/useTelegram'
+import { useUserStore } from './data/user'
 
 provideTelegram()
 
@@ -35,6 +36,9 @@ function checkAuth() {
   }
   return false
 }
+
+const userStore = useUserStore()
+userStore.startAutoRefreshToken()
 
 // Проверяем, есть ли токен при загрузке
 onMounted(() => {
