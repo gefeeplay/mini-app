@@ -15,3 +15,5 @@ COPY . .
 
 # Собираем приложение
 RUN npm run build
+
+EXPOSE 8080
