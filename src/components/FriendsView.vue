@@ -25,7 +25,6 @@ const userStore = useUserStore()
             <div class="avatar">
               <span class="material-symbols-outlined" style="color: black; font-size: 2rem;">account_circle</span>
             </div>
-            />
             <div class="info">
                 <div class="username">{{ friend.username }}</div>
                 <div class="date">Добавлен: {{ friend.date }}</div>
