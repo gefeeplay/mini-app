@@ -3,16 +3,20 @@ import { ref, onMounted, inject } from 'vue'
 import { tgLogin } from '../api/auth.js'
 import { useUserStore } from '../data/user.js'
 import { useTelegram } from '../composables/useTelegram.js'
+import RotatingText from './exportComponents/RotatingText.vue'
 
 const userStore = useUserStore()
-const { userData, /*initDataRaw*/ } = useTelegram() // убрать initDataRaw при разработке
+const { userData, initDataRaw: telegramInitData } = useTelegram()
 
-/* Только для разработки*/
-const fakeInitData = "user=%7B%22id%22%3A909844183%2C%22first_name%22%3A%22Miska%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22gefeeRu%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2F2cXXMBKksn2jvadNJFGJLUMjCLWWa6wcUhCZPT962M8.svg%22%7D&chat_instance=-6139284978316757086&chat_type=sender&auth_date=1755960241&signature=aA673g3WFjZ7Mu1-8HhKTZfIaPye5lxYnf44Dgmjtmnbv9YEP3ihlhxTivVoZp1Pm0wJVZhMlJYqdNy2A1_CAw&hash=63bbaca6ddc2c8c6be6a4f8c130ec401b0838b8723390a5aaec07c375dea2af3";
-const initDataRaw = fakeInitData
+const isDevelopment = import.meta.env.DEV
+const fakeInitData = import.meta.env.VITE_FAKE_INIT_DATA
 
+// Используем fake данные в development, реальные - в production
+const initDataRaw = isDevelopment && fakeInitData 
+  ? ref(fakeInitData)
+  : ref(telegramInitData)
 
-const initDataSend = String(initDataRaw) /* .value если не fake*/
+const initDataSend = String(initDataRaw.value)
 
 const setAuthenticated = inject('setAuthenticated')
 
@@ -74,10 +78,30 @@ async function login() {
 
 <template>
   <div class="login-container">
-    <div>Нажимая кнопку 'Войти', приложение получит доступ к вашим открытым данным.<br>
-      Ваши личные данные не пострадают.
+    
+    <img src="../assets/Group 5.svg" style="width: 300px; height: 100px;" />
+    <div class="img-description">Каждое тело можно прокачать</div>
+    
+    <div class="gainly-text">
+      Gainly - 
+      <RotatingText
+        :texts="['Ставь цели', 'Заряжайся силой', 'Делись с друзьями']"
+        splitBy="lines"
+        mainClassName="rotating-part"
+        :staggerFrom="'last'"
+        :initial="{ opacity: 0, scale: 0.8 }"
+        :animate="{ opacity: 1, scale: 1 }"
+        :exit="{ opacity: 0, scale: 1.2 }"
+        :staggerDuration="0"
+        :transition="{ type: 'spring', damping: 30, stiffness: 400 }"
+        :rotationInterval="2000"
+      />
     </div>
-    <button @click="login">Войти</button>
+
+    <div class="description">Погрузитесь в мир тренировок с нашим приложением!<br> 
+      Войдите через Telegram, чтобы начать тренироваться вместе с друзьями.
+    </div>
+    <button @click="login">Погнали</button>
   </div>
 </template>
 
@@ -92,15 +116,57 @@ async function login() {
   padding: 20px;
   text-align: center;
   box-sizing: border-box;
+  background: linear-gradient(to bottom , #6A80F6 20%, #FFFFFF);
+}
+.img-description{
+  font-weight: 600;
+  margin-bottom: 40px;
+  color: var(--dark-color);
+}
+
+.gainly-text {
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rotating-part {
+  display: inline-flex;
+  margin-left: 4px;
+  padding: 2px 12px;
+  background-color: rgb(124, 216, 158);
+  color: black;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+/* Дополнительно можно попробовать скрыть лишние элементы */
+:deep(.sr-only) {
+  display: none !important;
+}
+
+:deep(split-level) {
+  display: inline !important;
+}
+
+.description {
+  overflow-wrap: break-word;
+  white-space: pre-line;
 }
 
 button {
+  position: fixed;
+  font-size: 1.2rem;
+  bottom: 60px;
+  width: 200px;
+  height: 40px;
   margin-top: 20px;
   padding: 10px 20px;
-  background-color: #007bff;
+  background: linear-gradient(to bottom right, #92A3FD 0%, #9DCEFF 100%);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
 }
 
@@ -111,5 +177,9 @@ button:hover {
 div {
   overflow-wrap: break-word;
   white-space: pre-line;
+}
+
+.sr-only {
+  display: none !important;
 }
 </style>
