@@ -79,7 +79,7 @@ async function login() {
 <template>
   <div class="login-container">
     
-    <img src="../assets/Group 5.svg" style="width: 300px; height: 100px;" />
+    <img src="../assets/Group5.svg" style="width: 300px; height: 100px;" />
     <div class="img-description">Каждое тело можно прокачать</div>
     
     <div class="gainly-text">
