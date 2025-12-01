@@ -48,6 +48,7 @@ watch(searchQuery, async (val) => {
             foundUsers.value = result
         } catch (e) {
             console.error("Ошибка API:", e)
+            alert(`Ошибка при отправке запроса: ${e}`);
             foundUsers.value = []
         } finally {
             isLoading.value = false
