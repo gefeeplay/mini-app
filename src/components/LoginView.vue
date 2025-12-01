@@ -4,6 +4,7 @@ import { tgLogin } from '../api/auth.js'
 import { useUserStore } from '../data/user.js'
 import { useTelegram } from '../composables/useTelegram.js'
 import RotatingText from './exportComponents/RotatingText.vue'
+import Loader from './exportComponents/Loader.vue'
 
 const userStore = useUserStore()
 const { userData, initDataRaw: telegramInitData } = useTelegram()
@@ -12,7 +13,7 @@ const isDevelopment = import.meta.env.DEV
 const fakeInitData = import.meta.env.VITE_FAKE_INIT_DATA
 
 // Используем fake данные в development, реальные - в production
-const initDataRaw = isDevelopment && fakeInitData 
+const initDataRaw = isDevelopment && fakeInitData
   ? ref(fakeInitData)
   : ref(telegramInitData)
 
@@ -27,8 +28,13 @@ onMounted(() => {
   }
 })
 
+const isLoading = ref(false)
+
 async function login() {
   try {
+    // Устанавливаем состояние загрузки
+    isLoading.value = true
+
     if (!initDataRaw) {
       alert('Не удалось получить данные пользователя Telegram')
       return
@@ -72,36 +78,46 @@ async function login() {
     } else {
       alert('Ошибка авторизации: ' + (e.response?.data?.detail || e.message))
     }
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
 
 <template>
   <div class="login-container">
-    
+
     <img src="../assets/Group5.svg" style="width: 300px; height: 100px;" />
     <div class="img-description">Каждое тело можно прокачать</div>
-    
+
     <div class="gainly-text">
-      Gainly - 
-      <RotatingText
-        :texts="['Ставь цели', 'Заряжайся силой', 'Делись с друзьями']"
+      Gainly -
+      <RotatingText 
+        :texts="['Ставь цели', 'Заряжайся силой', 'Делись с друзьями']" 
         splitBy="lines"
-        mainClassName="rotating-part"
-        :staggerFrom="'last'"
+        mainClassName="rotating-part" 
+        :staggerFrom="'last'" 
         :initial="{ opacity: 0, scale: 0.8 }"
-        :animate="{ opacity: 1, scale: 1 }"
-        :exit="{ opacity: 0, scale: 1.2 }"
+        :animate="{ opacity: 1, scale: 1 }" 
+        :exit="{ opacity: 0, scale: 1.2 }" 
         :staggerDuration="0"
-        :transition="{ type: 'spring', damping: 30, stiffness: 400 }"
-        :rotationInterval="2000"
-      />
+        :transition="{ type: 'spring', damping: 30, stiffness: 400 }" 
+        :rotationInterval="2000" />
     </div>
 
-    <div class="description">Погрузитесь в мир тренировок с нашим приложением!<br> 
+    <div class="description">Погрузитесь в мир тренировок с нашим приложением!<br>
       Войдите через Telegram, чтобы начать тренироваться вместе с друзьями.
     </div>
-    <button @click="login">Погнали</button>
+
+    <div class="action-container">
+      <div v-if="isLoading" class="loader-wrapper">
+        <Loader />
+      </div>
+      <button v-else @click="login" :disabled="isLoading">
+        Погнали
+      </button>
+    </div>
+
   </div>
 </template>
 
@@ -116,9 +132,10 @@ async function login() {
   padding: 20px;
   text-align: center;
   box-sizing: border-box;
-  background: linear-gradient(to bottom , #6A80F6 20%, #FFFFFF);
+  background: linear-gradient(to bottom, #6A80F6 20%, #FFFFFF);
 }
-.img-description{
+
+.img-description {
   font-weight: 600;
   margin-bottom: 40px;
   color: var(--dark-color);
@@ -156,9 +173,7 @@ async function login() {
 }
 
 button {
-  position: fixed;
   font-size: 1.2rem;
-  bottom: 60px;
   width: 200px;
   height: 40px;
   margin-top: 20px;
@@ -174,9 +189,23 @@ button:hover {
   background-color: #0056b3;
 }
 
-div {
-  overflow-wrap: break-word;
-  white-space: pre-line;
+.action-container {
+  position: fixed;
+  bottom: 60px;
+  height: 40px;
+  /* Высота, равная высоте вашей кнопки */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  /* Отступ, как у кнопки */
+}
+
+.loader-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80%;
 }
 
 .sr-only {
