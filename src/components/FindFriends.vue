@@ -1,10 +1,12 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, computed, watch, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../data/user';
 import { getUsers, sendFriendRequest } from '../api/friend';
 import SearchInput from './exportComponents/SearchInput.vue';
+import Loader from './exportComponents/Loader.vue';
 
+const curTheme = inject('theme');
 const router = useRouter()
 function goBack() { router.push('/friends') }
 
@@ -13,24 +15,39 @@ const userStore = useUserStore();
 const searchQuery = ref("");
 const foundUsers = ref([]);
 const loadingRequests = ref(new Set()); // для отслеживания отправляемых запросов
+const isLoading = ref(false) // для loader'а
+let searchTimeout = null // Добавляем debounce для предотвращения частых запросов
 
-// --- ДЕБАУНС ПО КОЛИЧЕСТВУ СИМВОЛОВ: 3, 6, 9... ---
+// Вычисляем цвет лоадера в зависимости от темы
+const loaderColor = computed(() => {
+  return curTheme.theme.value == 'dark' ? '#ffffff' : '#333333'
+})
+
+
 watch(searchQuery, async (val) => {
     // Если пусто — очистить
     if (!val) {
         foundUsers.value = [];
         return;
     }
+    
+    // обнуляем предыдущие результаты поиска
+    foundUsers.value = [] 
+    // Устанавливаем состояние загрузки
+    isLoading.value = true
 
-    // если длина НЕ кратна 3 → ничего не делать
-    if (val.length % 3 !== 0) return;
-
-    try {
-        const result = await getUsers(val, userStore.getAccessToken());
-        foundUsers.value = result;
-    } catch (e) {
-        console.error("Ошибка API:", e);
-    }
+    // Задержка перед отправкой запроса (debounce)
+    searchTimeout = setTimeout(async () => {
+        try {
+            const result = await getUsers(val, userStore.getAccessToken())
+            foundUsers.value = result
+        } catch (e) {
+            console.error("Ошибка API:", e)
+            foundUsers.value = []
+        } finally {
+            isLoading.value = false
+        }
+    }, 500) // 500ms debounce
 });
 
 // --- ОТПРАВКА ЗАПРОСА В ДРУЗЬЯ ---
@@ -67,6 +84,14 @@ async function handleSendRequest(user) {
 function isSendingRequest(user) {
     return loadingRequests.value.has(user.username);
 }
+
+// Очищаем таймер при размонтировании компонента
+import { onUnmounted } from 'vue'
+onUnmounted(() => {
+    if (searchTimeout) {
+        clearTimeout(searchTimeout)
+    }
+})
 </script>
 
 <template>
@@ -78,6 +103,11 @@ function isSendingRequest(user) {
   </div>
   <div class="search-input">
       <SearchInput v-model="searchQuery" />
+  </div>
+
+  <!-- Loader при поиске -->
+  <div v-if="isLoading" class="search-loader">
+    <Loader :color="loaderColor" :size="8" />
   </div>
 
   <!-- СПИСОК НАЙДЕННЫХ ПОЛЬЗОВАТЕЛЕЙ -->
@@ -110,9 +140,23 @@ function isSendingRequest(user) {
           </button>
       </div>
   </div>
+  <!-- Сообщение, когда пользователи не найдены (только после завершения поиска) -->
+  <div v-else-if="searchQuery && !isLoading" class="received-no-users">
+    Пользователи не найдены
+  </div>
+  
+
 </template>
 
 <style scoped>
+.search-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    height: 50px;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -174,5 +218,10 @@ function isSendingRequest(user) {
   font-size: 0.85rem;
   color: #777;
   text-align: left;
+}
+
+.received-no-users{
+  margin-top: 40px;
+  color: var(--dark-red-color);
 }
 </style>
