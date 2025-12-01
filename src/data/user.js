@@ -35,35 +35,42 @@ export const useUserStore = defineStore('user', () => {
     }
 
     // ---- 🔄 АВТО-ОБНОВЛЕНИЕ КАЖДЫЕ 15 МИН ----
-    function startAutoRefreshToken() {
-        if (autoRefreshStarted.value) return;
+function startAutoRefreshToken() {
+    if (autoRefreshStarted.value) return;
 
-        autoRefreshStarted.value = true;
-        console.log("Автообновление токена запущено");
+    autoRefreshStarted.value = true;
+    console.log("Автообновление токена запущено");
 
-        setInterval(async () => {
-            const loginDateStr = localStorage.getItem("loginDate");
+    // Функция для проверки и обновления токена
+    async function checkAndRefreshToken() {
+        const loginDateStr = localStorage.getItem("loginDate");
 
-            if (!loginDateStr) {
-                console.warn("loginDate отсутствует, пропускаем автообновление");
-                return;
-            }
+        if (!loginDateStr) {
+            console.warn("loginDate отсутствует, пропускаем автообновление");
+            return;
+        }
 
-            const loginDate = Number(loginDateStr);
-            const now = Date.now();
+        const loginDate = Number(loginDateStr);
+        const now = Date.now();
 
-            const diffMinutes = (now - loginDate) / 1000 / 60;
+        const diffMinutes = (now - loginDate) / 1000 / 60;
 
-            console.log(`⏱ Время после loginDate: ${diffMinutes.toFixed(1)} мин`);
+        console.log(`⏱ Время после loginDate: ${diffMinutes.toFixed(1)} мин`);
 
-            // Если прошло >= 15 минут → обновляем токен
-            if (diffMinutes >= 15) {
-                console.log("⏳ Прошло больше 15 минут — обновляем токен...");
-                await refreshAccessToken();
-            }
-            
-        }, 60 * 1000); // проверяем каждую минуту
+        // Если прошло >= 15 минут → обновляем токен
+        if (diffMinutes >= 15) {
+            console.log("⏳ Прошло больше 15 минут — обновляем токен...");
+            await refreshAccessToken();
+        }
     }
+
+    // Выполняем первую проверку сразу
+    checkAndRefreshToken();
+
+    // Затем запускаем интервал для последующих проверок
+    setInterval(checkAndRefreshToken, 60 * 1000); // проверяем каждую минуту
+}
+
 
     // ---- FETCH TRAININGS ----
     async function fetchTrainings() {
