@@ -25,6 +25,11 @@ const loaderColor = computed(() => {
 
 
 watch(searchQuery, async (val) => {
+    // Очищаем предыдущий таймер
+    if (searchTimeout) {
+        clearTimeout(searchTimeout)
+    }  
+  
     // Если пусто — очистить
     if (!val) {
         foundUsers.value = [];
@@ -47,7 +52,7 @@ watch(searchQuery, async (val) => {
         } finally {
             isLoading.value = false
         }
-    }, 500) // 500ms debounce
+    }, 1000) // 1s debounce
 });
 
 // --- ОТПРАВКА ЗАПРОСА В ДРУЗЬЯ ---
