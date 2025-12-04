@@ -46,8 +46,13 @@ const router = createRouter({
 if (window.Telegram && window.Telegram.WebApp) {
   const tg = window.Telegram.WebApp
   
+  // Обязательно вызвать ready()
+  tg.ready()
+
+  // Расширяет WebView — исправляет фокус инпутов
   tg.expand()
   
+  // Делаем доступным в приложении как this.$tg
   app.config.globalProperties.$tg = tg
 }
 
