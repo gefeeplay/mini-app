@@ -11,6 +11,8 @@ export const useUserStore = defineStore('user', () => {
     const trainings = ref([])
     const loading = ref(false)
     const error = ref(null)
+    const accessToken = ref(sessionStorage.getItem("accessToken"))
+    const refreshToken = ref(sessionStorage.getItem("refreshToken"))
     const autoRefreshStarted = ref(false) // чтобы не запускалось дважды
 
     const friends = ref([
@@ -27,11 +29,19 @@ export const useUserStore = defineStore('user', () => {
 
     // ---- TOKEN FUNCS ----
     function getAccessToken() {
-        return localStorage.getItem('accessToken')
+        return accessToken.value
     }
 
     function getRefreshToken() {
-        return localStorage.getItem('refreshToken')
+        return refreshToken.value
+    }
+
+    function setTokens({ access, refresh }) {
+        accessToken.value = access
+        refreshToken.value = refresh
+
+        sessionStorage.setItem("accessToken", access)
+        sessionStorage.setItem("refreshToken", refresh)
     }
 
     // ---- 🔄 АВТО-ОБНОВЛЕНИЕ КАЖДЫЕ 15 МИН ----
@@ -64,8 +74,8 @@ function startAutoRefreshToken() {
         }
     }
 
-    // Выполняем первую проверку сразу
-    checkAndRefreshToken();
+    // Выполняем обновление токенов при входе
+    refreshAccessToken()
 
     // Затем запускаем интервал для последующих проверок
     setInterval(checkAndRefreshToken, 60 * 1000); // проверяем каждую минуту
@@ -114,14 +124,16 @@ function startAutoRefreshToken() {
         friends,
         loading,
         error,
+        accessToken,
+        refreshToken,
 
         // токены/логика
         getAccessToken,
         getRefreshToken,
-        refreshAccessToken,
-        startAutoRefreshToken,
+        setTokens,
 
         // действия
+        startAutoRefreshToken,
         fetchTrainings,
         addTraining,
         removeTraining,
