@@ -10,6 +10,7 @@ provideTelegram()
 const userData = ref(null)
 const theme = ref('light')
 const isAuthenticated = ref(false) // Флаг авторизации
+const userStore = useUserStore()
 
 provide('theme', { 
   theme, 
@@ -22,7 +23,7 @@ provide('setAuthenticated', (value) => {
 })
 
 function checkAuth() {
-  const refreshToken = localStorage.getItem('refreshToken')
+  const refreshToken = userStore.getRefreshToken()
   const loginDate = localStorage.getItem('loginDate')
 
   if (refreshToken && loginDate) {
@@ -37,7 +38,6 @@ function checkAuth() {
   return false
 }
 
-const userStore = useUserStore()
 userStore.startAutoRefreshToken()
 
 // Проверяем, есть ли токен при загрузке

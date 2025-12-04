@@ -56,10 +56,12 @@ async function login() {
     }
 
     if (data.accessToken) {
-      localStorage.setItem('accessToken', data.accessToken)
-    }
-    if (data.refreshToken) {
-      localStorage.setItem('refreshToken', data.refreshToken)
+      sessionStorage.setItem("refreshToken", data.refreshToken)
+      sessionStorage.setItem("accessToken", data.accessToken)
+      userStore.setTokens({
+        access: data.accessToken,
+        refresh: data.refreshToken
+      })
     }
     // Записываем дату входа (в миллисекундах)
     localStorage.setItem('loginDate', Date.now().toString())

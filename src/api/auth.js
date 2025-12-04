@@ -1,3 +1,4 @@
+import { useUserStore } from '../data/user.js'
 import axios from 'axios'
 
 const API_URL = 'https://gainly.site/auth/api/auth'
@@ -24,7 +25,8 @@ export async function tgLogin(initDataRaw) {
 }
 
 export async function refreshAccessToken() {
-    const refreshToken = localStorage.getItem('refreshToken')
+  const userStore = useUserStore()
+  const refreshToken = userStore.getRefreshToken()
     if (!refreshToken) {
         console.warn("Нет refresh токена — автообновление остановлено")
         return null
@@ -34,7 +36,10 @@ export async function refreshAccessToken() {
         const response = await axios.post(REFRESH_URL, { refreshToken })
 
         if (response.data?.accessToken) {
-            localStorage.setItem('accessToken', response.data.accessToken)
+            userStore.setTokens({
+                access: response.data.accessToken,
+                refresh: response.data.refreshToken
+            })
             localStorage.setItem('loginDate', Date.now().toString())
             console.log("Access token обновлён автоматически")
             return response.data.accessToken

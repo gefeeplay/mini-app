@@ -1,10 +1,12 @@
 import axios from 'axios'
 import { refreshAccessToken } from './auth.js'
+import { useUserStore } from '../data/user.js'
 
 const API_URL = 'https://gainly.site/workout/api/Workout/workouList'
 
 export async function fetchTrainings() {
-    const accessToken = localStorage.getItem('accessToken')
+    const userStore = useUserStore()
+    const accessToken = userStore.getAccessToken()
 
     try {
         const response = await axios.get(API_URL, {
