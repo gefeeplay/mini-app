@@ -2,12 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
-import SettingsView from './components/SettingsView.vue'
-import FeedView from './components/FeedView.vue'
-import FriendsView from './components/FriendsView.vue'
-import TrainingView from './components/TrainingView.vue'
-import FindFriends from './components/FindFriends.vue'
-import FriendsRequests from './components/FriendsRequests.vue'
 import { createPinia } from 'pinia'
 
 const app = createApp(App)
@@ -19,27 +13,27 @@ const router = createRouter({
   routes: [{
     name: 'Feed',
     path: '/',
-    component: FeedView
+    component: () => import('./components/FeedView.vue')
   },{
     name: 'Training',
     path: '/training',
-    component: TrainingView
+    component: () => import('./components/TrainingView.vue')
   },{
     name: 'Friends',
     path: '/friends',
-    component: FriendsView
+    component: () => import('./components/FriendsView.vue')
   },{
     name: 'Find',
     path: '/friends/find', 
-    component: FindFriends
+    component: () => import('./components/FindFriends.vue')
   },{
     name: 'FriendsRequests',
     path: '/friends/requests', 
-    component: FriendsRequests
+    component: () => import('./components/FriendsRequests.vue')
   },{
     name: 'Settings',
     path: '/settings',
-    component: SettingsView
+    component: () => import('./components/SettingsView.vue')
   }]
 })
 
