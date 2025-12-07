@@ -1,11 +1,13 @@
 <script setup>
-import { inject, ref, computed, onMounted} from 'vue';
+import { inject, ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
 import { useTelegram } from '../composables/useTelegram'
-import { useUserStore } from '../data/user'; 
+import { useUserStore } from '../data/user';
 import ToggleSwitch from './exportComponents/ToggleSwitch.vue';
 import QrWindow from './QrWindow.vue';
 import ChangeProfile from './ChangeProfile.vue';
+import { uploadAvatar } from '../api/avatars';
+
 
 const curTheme = inject('theme');
 const setAuthenticated = inject('setAuthenticated')
@@ -24,6 +26,27 @@ const showEdit = ref(false)
 const saveUser = (newUsername) => {
   userStore.setUsername(newUsername)
 }
+
+const saveAvatar = async (file) => {
+  if (!file) return;
+
+  const token = userStore.getAccessToken();
+  if (!token) return;
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const result = await uploadAvatar(formData, token);
+
+    console.log('Аватарка загружена:', result);
+    alert('Аватарка успешно загружена!');
+  } catch (err) {
+    console.error('Ошибка загрузки аватарки:', err);
+    const errorMessage = err.response?.data?.detail || err.message;
+    alert(`Ошибка при ззагрузке аватарки: ${errorMessage}`, err.response?.data?.status);
+  }
+};
 
 onMounted(() => {
   userStore.loadUsername()
@@ -45,33 +68,33 @@ const logout = () => {
 </script>
 
 <template>
-    <div class="title">
-        Настройки
+  <div class="title">
+    Настройки
+  </div>
+  <div class="settings">
+    <div class="profile">
+      <div>Профиль
+        <k v-if="userStore.username">{{ userStore.username }}</k>
+        <k v-else>{{ tgUsername }}</k>
+      </div>
+      <div class="user-photo" v-if="userPhoto"><img :src="userPhoto"></div>
+      <div class="avatar-placeholder" v-else></div>
+      <button class="edit" @click="showEdit = true"><span class="material-symbols-outlined">edit</span></button>
+      <ChangeProfile :showEdit="showEdit" @closeEdit="showEdit = false" @saveUser="saveUser" @saveAvatar="saveAvatar" />
     </div>
-    <div class="settings">
-        <div class="profile">
-            <div>Профиль
-              <k v-if="userStore.username">{{ userStore.username }}</k>
-              <k v-else>{{ tgUsername }}</k>
-            </div>
-            <div class="user-photo" v-if="userPhoto"><img :src="userPhoto"></div>
-            <div class="avatar-placeholder" v-else></div>  
-            <button class="edit" @click="showEdit = true"><span class="material-symbols-outlined">edit</span></button> 
-            <ChangeProfile :showEdit="showEdit" @closeEdit="showEdit = false" @saveUser="saveUser"/>
-        </div>
-        
-        <div class="theme">
-            <div>Тема: {{ curTheme.theme }}</div>
-            <ToggleSwitch/>
-        </div>
 
-        <div class="share">
-          <div>Поделиться приложением</div>
-          <button @click="showQr = true"><span class="material-symbols-outlined">share</span></button>
-          <QrWindow :bot-username="'gefeeminiappbot'" :show="showQr" @close="showQr = false" />
-        </div>
-        <div class="exit" @click="logout">Выйти</div>
+    <div class="theme">
+      <div>Тема: {{ curTheme.theme }}</div>
+      <ToggleSwitch />
     </div>
+
+    <div class="share">
+      <div>Поделиться приложением</div>
+      <button @click="showQr = true"><span class="material-symbols-outlined">share</span></button>
+      <QrWindow :bot-username="'gefeeminiappbot'" :show="showQr" @close="showQr = false" />
+    </div>
+    <div class="exit" @click="logout">Выйти</div>
+  </div>
 </template>
 
 <style scoped>
@@ -105,7 +128,7 @@ const logout = () => {
 .user-photo img {
   width: 100%;
   height: 100%;
-  object-fit: cover; 
+  object-fit: cover;
   border-radius: 50%;
 }
 
@@ -127,7 +150,10 @@ const logout = () => {
   align-items: center;
 }
 
-.theme, .profile, .exit, .share {
+.theme,
+.profile,
+.exit,
+.share {
   border: 1px solid var(--theme-color);
   border-radius: 0.5rem;
   padding: 1rem;
@@ -162,5 +188,4 @@ button {
   right: 32px;
   cursor: pointer;
 }
-
 </style>
