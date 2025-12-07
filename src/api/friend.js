@@ -40,3 +40,31 @@ export async function sendFriendRequest(username, token) {
   
   return response.data;
 }
+
+export async function getFriendRequests(token) {
+  const url = `${BASE_URL}/pending`;
+
+  const response = await axios.get(url, {
+    headers: {
+      accept: 'text/plain',
+      Authorization: `Bearer ${token || ''}`
+    }
+  });
+
+  return response.data;
+}
+
+export async function respondToFriendRequest(friendshipId, accept, token) {
+  const url = `${BASE_URL}/respond/${encodeURIComponent(friendshipId)}?accept=${accept}`;
+
+  const response = await axios.post(url, 
+    {},
+    {
+    headers: {
+      accept: 'text/plain',
+      Authorization: `Bearer ${token || ''}`
+    },
+  });
+
+  return response.data;
+}
