@@ -79,7 +79,7 @@ async function handleSendRequest(user) {
     } catch (error) {
         console.error(`Ошибка при отправке запроса пользователю ${user.username}:`, error);
         const errorMessage = error.response?.data?.detail || error.message;
-        alert(`Ошибка при отправке запроса: ${errorMessage}`);
+        alert(`Ошибка при отправке запроса: ${errorMessage}`, error.response?.data?.status);
     } finally {
         // Убираем username из набора загрузки
         loadingRequests.value.delete(user.username);
