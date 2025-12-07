@@ -1,10 +1,34 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, computed } from 'vue'
 import SearchInput from './exportComponents/SearchInput.vue';
 import { useUserStore } from '../data/user'
+import { getFriendRequests } from '../api/friend';
 
 const userStore = useUserStore()
 
+// 👉 получение запросов в друзья
+onMounted(async () => {
+
+  //Выполнияем только если запросов нет
+  if (!userStore.friendRequests.length > 0) {
+    try {
+      const token = userStore.accessToken
+      if (!token) return
+
+      const requests = await getFriendRequests(token)
+
+      // сохранить в store
+      userStore.setFriendRequests(requests)
+
+      //console.log('Friend requests:', userStore.friendRequests)
+    } catch (err) {
+      console.error('Ошибка при загрузке запросов:', err)
+    }
+  }
+})
+  
+
+const requestsCount = computed(() => userStore.friendRequests.length)
 </script>
 
 <template>
@@ -18,6 +42,7 @@ const userStore = useUserStore()
         </button>
         <button class="create" @click="$router.push('/friends/requests')">
           <span class="material-symbols-outlined">notifications</span>
+          <span v-if="requestsCount > 0" class="notif-badge">{{ requestsCount }}</span>
         </button>
     </div>
     <div class="fr-list">
@@ -43,8 +68,26 @@ const userStore = useUserStore()
 }
 
 .create {
+  position: relative;
   cursor: pointer;
   height: 1.5rem;
+}
+
+.notif-badge{
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: var(--red-color);
+  color: white;
+  height: 12px;
+  width: 12px;
+  box-sizing: border-box;
+  padding-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.5rem;
 }
 
 .fr-list{
