@@ -20,6 +20,16 @@ export const useUserStore = defineStore('user', () => {
         { username: 'Alex', photo_url: '', date: '20.08.2025' }
     ])
 
+    const friendRequests = ref([])
+
+    function setFriendRequests(requests) {
+        friendRequests.value = requests
+    }
+
+    function removeFriendRequest(id) {
+        friendRequests.value = friendRequests.value.filter(r => r.friendshipId !== id)
+    }
+
     const trainingsWithUsername = computed(() =>
         trainings.value.map(t => {
             const raw = t.username ?? username
@@ -75,7 +85,7 @@ function startAutoRefreshToken() {
     }
 
     // Выполняем обновление токенов при входе
-    refreshAccessToken()
+    //refreshAccessToken()
 
     // Затем запускаем интервал для последующих проверок
     setInterval(checkAndRefreshToken, 60 * 1000); // проверяем каждую минуту
@@ -126,6 +136,7 @@ function startAutoRefreshToken() {
         error,
         accessToken,
         refreshToken,
+        friendRequests,
 
         // токены/логика
         getAccessToken,
@@ -139,5 +150,7 @@ function startAutoRefreshToken() {
         removeTraining,
         setUsername,
         loadUsername,
+        setFriendRequests,
+        removeFriendRequest
     }
 })
