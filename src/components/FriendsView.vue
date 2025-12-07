@@ -2,12 +2,30 @@
 import { onMounted, computed } from 'vue'
 import SearchInput from './exportComponents/SearchInput.vue';
 import { useUserStore } from '../data/user'
-import { getFriendRequests } from '../api/friend';
+import { getFriendRequests, getFriendsList } from '../api/friend';
 
 const userStore = useUserStore()
 
 // 👉 получение запросов в друзья
 onMounted(async () => {
+
+  if (!userStore.friends.length > 0) {
+    try {
+      const token = userStore.accessToken
+      if (!token) return
+
+      const friendList = await getFriendsList(token)
+
+      // сохранить в store
+      userStore.setFriends(friendList)
+
+      console.log('Друзья:', userStore.friends)
+    } catch (err) {
+        console.error(`Ошибка при запросе списка друзей ${user.username}:`, err);
+        const errorMessage = err.response?.data?.detail || er.message;
+        alert(`Ошибка при запросе списка друзей: ${errorMessage}`, er.response?.data?.status);
+    }
+  }
 
   //Выполнияем только если запросов нет
   if (!userStore.friendRequests.length > 0) {
@@ -52,7 +70,7 @@ const requestsCount = computed(() => userStore.friendRequests.length)
             </div>
             <div class="info">
                 <div class="username">{{ friend.username }}</div>
-                <div class="date">Добавлен: {{ friend.date }}</div>
+                <div class="date">С нами с: {{ new Date(friend.registrationDate).toISOString().slice(0, 10) }}</div>
             </div>
             <button><img src="../assets/chat-round-dots-svgrepo-com.svg" style="height: 1.5rem;" /></button>
         </div>

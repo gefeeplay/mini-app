@@ -15,10 +15,11 @@ export const useUserStore = defineStore('user', () => {
     const refreshToken = ref(sessionStorage.getItem("refreshToken"))
     const autoRefreshStarted = ref(false) // чтобы не запускалось дважды
 
-    const friends = ref([
-        { username: 'Miska', photo_url: '', date: '20.01.2025' },
-        { username: 'Alex', photo_url: '', date: '20.08.2025' }
-    ])
+    const friends = ref([])
+
+    function setFriends(friendsList) {
+        friends.value = friendsList
+    }
 
     const friendRequests = ref([])
 
@@ -151,6 +152,7 @@ function startAutoRefreshToken() {
         setUsername,
         loadUsername,
         setFriendRequests,
-        removeFriendRequest
+        removeFriendRequest,
+        setFriends
     }
 })

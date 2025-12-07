@@ -68,3 +68,16 @@ export async function respondToFriendRequest(friendshipId, accept, token) {
 
   return response.data;
 }
+
+export async function getFriendsList(token) {
+  const url = `${BASE_URL}/list`;
+
+  const response = await axios.get(url, {
+    headers: {
+      accept: 'text/plain',
+      Authorization: `Bearer ${token || ''}`
+    }
+  });
+
+  return response.data;
+}
