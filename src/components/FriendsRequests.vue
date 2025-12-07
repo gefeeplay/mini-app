@@ -40,7 +40,9 @@ async function rejectRequest(req) {
 
   } catch (err) {
     const errorMessage = err.response?.data?.detail || err.message;
-    alert('Ошибка при отклонении запроса:', errorMessage, err.response?.data?.status)
+    alert(
+      `Ошибка: ${err.message}\nОтвет сервера: ${JSON.stringify(err.response.data, null, 2)}`
+    );
     console.error('Ошибка при отклонении запроса:', errorMessage, err.response?.data?.status)
   }
 }
