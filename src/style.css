@@ -56,9 +56,9 @@ body {
   align-items: center;    
   justify-content: center;
   gap: 0.5rem; 
-  padding: 0.5rem;
+  padding: 8px;
   cursor: pointer;
-  max-height: 3rem;
+  max-height: 48px;
 }
 
 .nav-text {
