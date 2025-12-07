@@ -3,15 +3,44 @@ import SearchInput from './exportComponents/SearchInput.vue';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue'
 import { useUserStore } from '../data/user'
+import { respondToFriendRequest } from '../api/friend';
 
 const userStore = useUserStore()
 
 const router = useRouter()
 
-const requests = ref([userStore.friends[0]])
-
 function goBack() {
     router.push('/friends')
+}
+
+// Принять запрос
+async function acceptRequest(req) {
+  try {
+    await respondToFriendRequest(req.friendshipId, true, userStore.accessToken)
+
+    // удалить из стора
+    userStore.removeFriendRequest(req.friendshipId)
+
+  } catch (err) {
+    const errorMessage = err.response?.data?.detail || err.message;
+    alert('Ошибка при отклонении запроса:', errorMessage, err.response?.data?.status)
+    console.error('Ошибка при отклонении запроса:', errorMessage, err.response?.data?.status)
+  }
+}
+
+// Отклонить запрос
+async function rejectRequest(req) {
+  try {
+    await respondToFriendRequest(req.friendshipId, false, userStore.accessToken)
+
+    // удалить из стора
+    userStore.removeFriendRequest(req.friendshipId)
+
+  } catch (err) {
+    const errorMessage = err.response?.data?.detail || err.message;
+    alert('Ошибка при отклонении запроса:', errorMessage, err.response?.data?.status)
+    console.error('Ошибка при отклонении запроса:', errorMessage, err.response?.data?.status)
+  }
 }
 </script>
 
@@ -26,17 +55,19 @@ function goBack() {
         <SearchInput />
     </div>
     <div class="fr-list">
-        <div class="friend-card" v-for="friend in requests" :key="friend.username">
-            <img :src="friend.photo_url || 'https://via.placeholder.com/50'" alt="avatar" class="avatar" />
+        <div class="friend-card" v-for="req in userStore.friendRequests" :key="req.friendshipId">
+            <div class="avatar">
+                <span class="material-symbols-outlined" style="color: black; font-size: 2rem;">account_circle</span>
+            </div>
             <div class="info">
-                <div class="username">{{ friend.username }}</div>
-                <div class="date">Общих друзя</div>
+                <div class="username">{{ req.fromUsername }}</div>
             </div>
             <div class="btns">
-                <button class="btn-accept">
+                <button class="btn-accept" @click="acceptRequest(req)">
                     <span class="material-symbols-outlined" style="color: green; font-size: 1.8rem;">check_circle</span>
                 </button>
-                <button class="btn-reject">
+
+                <button class="btn-reject" @click="rejectRequest(req)">
                     <span class="material-symbols-outlined" style="color: var(--red-color); font-size: 1.8rem;">cancel</span>
                 </button>
             </div>
