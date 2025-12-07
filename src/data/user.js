@@ -14,11 +14,15 @@ export const useUserStore = defineStore('user', () => {
     const accessToken = ref(sessionStorage.getItem("accessToken"))
     const refreshToken = ref(sessionStorage.getItem("refreshToken"))
     const autoRefreshStarted = ref(false) // чтобы не запускалось дважды
-
+    const avatarUrl = ref(null)
     const friends = ref([])
 
     function setFriends(friendsList) {
         friends.value = friendsList
+    }
+
+    function setAvatarUrl(url) {
+        avatarUrl.value = url
     }
 
     const friendRequests = ref([])
@@ -153,6 +157,7 @@ function startAutoRefreshToken() {
         loadUsername,
         setFriendRequests,
         removeFriendRequest,
-        setFriends
+        setFriends,
+        setAvatarUrl
     }
 })
