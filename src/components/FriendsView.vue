@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import SearchInput from './exportComponents/SearchInput.vue';
 import { useUserStore } from '../data/user'
 import { getFriendRequests, getFriendsList } from '../api/friend';
@@ -7,21 +7,19 @@ import { getAvatar } from '../api/avatars';
 
 const userStore = useUserStore()
 
-const avatars = ref({});
-
 const loadAvatar = async (username) => {
   const token = userStore.accessToken;
   if (!token) return;
 
-  // Если аватарка уже загружена — не повторяем запрос
-  if (avatars.value[username]) return;
+  // Проверяем, есть ли уже аватарка в хранилище
+  if (userStore.hasAvatar(username)) return;
 
   try {
     const url = await getAvatar(token, username);
-    avatars.value[username] = url;
+    userStore.setAvatar(username, url);
   } catch (err) {
     console.warn(`Аватар ${username} не найден — ставим fallback`);
-    avatars.value[username] = null; // нет аватарки — будет иконка
+    userStore.setAvatar(username, null);
   }
 };
 
@@ -92,20 +90,17 @@ const requestsCount = computed(() => userStore.friendRequests.length)
   </div>
   <div class="fr-list">
     <div class="friend-card" v-for="friend in userStore.friends" :key="friend.username">
-
       <div class="avatar">
-        <img v-if="avatars[friend.username]" :src="avatars[friend.username]" class="fr-avatar" />
-
+        <!-- Используем аватарку из хранилища -->
+        <img v-if="userStore.getAvatar(friend.username)" :src="userStore.getAvatar(friend.username).url" class="avatar" />
         <span v-else class="material-symbols-outlined" style="color: black; font-size: 2rem;">
           account_circle
         </span>
       </div>
-
       <div class="info">
         <div class="username">{{ friend.username }}</div>
         <div class="date">С нами с: {{ new Date(friend.registrationDate).toISOString().slice(0, 10) }}</div>
       </div>
-
       <button><img src="../assets/chat-round-dots-svgrepo-com.svg" style="height: 1.5rem;" /></button>
     </div>
   </div>
