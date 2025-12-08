@@ -14,17 +14,39 @@ export const useUserStore = defineStore('user', () => {
     const accessToken = ref(sessionStorage.getItem("accessToken"))
     const refreshToken = ref(sessionStorage.getItem("refreshToken"))
     const autoRefreshStarted = ref(false) // чтобы не запускалось дважды
-    const avatarUrl = ref(null)
     const friends = ref([])
+    const avatars = ref({})
+
 
     function setFriends(friendsList) {
         friends.value = friendsList
     }
 
-    function setAvatarUrl(url) {
-        avatarUrl.value = url
+    // Функции для аватарок
+     function setAvatar(username, url) {
+        avatars.value[username] = url
     }
 
+    function getAvatar(username) {
+        return avatars.value[username]
+    }
+
+    function hasAvatar(username) {
+        return avatars.value[username] !== undefined
+    }
+
+    function clearAvatar(username) {
+        if (avatars.value[username]) {
+            delete avatars.value[username]
+        }
+    }
+
+    function clearAllAvatars() {
+        avatars.value = {}
+    }
+
+
+    // Запросы в друзья
     const friendRequests = ref([])
 
     function setFriendRequests(requests) {
@@ -142,6 +164,7 @@ function startAutoRefreshToken() {
         accessToken,
         refreshToken,
         friendRequests,
+        avatars,
 
         // токены/логика
         getAccessToken,
@@ -158,6 +181,12 @@ function startAutoRefreshToken() {
         setFriendRequests,
         removeFriendRequest,
         setFriends,
-        setAvatarUrl
+        
+        //Аватарки
+        setAvatar,
+        getAvatar,
+        hasAvatar,
+        clearAvatar,
+        clearAllAvatars
     }
 })
