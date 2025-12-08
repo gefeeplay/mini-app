@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://fitness-app-api-gateway.fly.dev/api';
+const BASE_URL = 'https://gainly-avatars.fly.dev/api';
 
 // Загрузка аватарки пользователя
 export async function uploadAvatar(imageFile, token) {
@@ -18,11 +18,11 @@ export async function uploadAvatar(imageFile, token) {
 
 // Получение аватарки пользователя
 export async function getAvatar(token, username) {
-    const url = `${BASE_URL}/avata?username=${encodeURIComponent(username)}`;
+    const url = `${BASE_URL}/avatar?username=${encodeURIComponent(username)}`;
 
     const response = await axios.get(url, {
         headers: {
-            'Accept': 'image/*',
+            'accept':'application/json',
             'Authorization': `Bearer ${token || ''}`
         },
 
