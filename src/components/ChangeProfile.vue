@@ -85,7 +85,6 @@ const onFileChange = (e) => {
     position: fixed;
     top: 0;
     left: 0;
-    
     width: 100%;
     bottom: 62px;
     background: rgba(0, 0, 0, 0.5);
@@ -98,7 +97,7 @@ const onFileChange = (e) => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #fff;
+    background: var(--not-theme-color);
     width: 100%;
     max-width: 480px;
     border-radius: 18px;
@@ -129,7 +128,7 @@ const onFileChange = (e) => {
     border: none;
     cursor: pointer;
     padding: 6px;
-    color: #666;
+    color: var(--whi-color);
 }
 
 .close-btn:hover {
@@ -155,7 +154,7 @@ const onFileChange = (e) => {
     display: block;
     margin-bottom: 4px;
     font-size: 0.85rem;
-    color: #555;
+    color: var(--theme-color);
 }
 
 .input {
