@@ -1,14 +1,16 @@
 <script setup>
-  const navItems = [
-  { to: '/', icon: 'menu', text: 'Лента' },
-  { to: '/training', icon: 'directions_run', text: 'Тренировки' },
-  { to: '/friends', icon: 'chat', text: 'Друзья' },
-  { to: '/settings', icon: 'settings', text: 'Настройки' },
+import { Icon } from '@iconify/vue';
+
+const navItems = [
+  { to: '/', icon: 'fluent:home-24-filled', text: 'Лента' },
+  { to: '/training', icon: 'lets-icons:chart-alt-fill', text: 'Тренировки' },
+  { to: '/friends', icon: 'fa7-solid:users', text: 'Друзья' },
+  { to: '/settings', icon: 'majesticons:settings-cog', text: 'Настройки' },
 ]
 </script>
 
 <template>
-    <div class="navigation nav-text">
+  <div class="navigation nav-text">
     <RouterLink 
       v-for="item in navItems" 
       :key="item.to" 
@@ -21,10 +23,15 @@
         @click="navigate"
         :class="{ active: isActive }"
       >
-        <span class="material-symbols-outlined"
-        :class="{ active: isActive }"
-        >{{ item.icon }}</span>
+        <Icon 
+          :icon="item.icon" 
+          width="28" 
+          class="nav-icon"
+          :class="{ active: isActive }"
+        />
+
         <span class="nav-text">{{ item.text }}</span>
+
       </button>
     </RouterLink>
   </div>
@@ -32,13 +39,13 @@
 
 <style scoped>
 /* Иконки */
-.material-symbols-outlined {
+.nav-icon {
   transition: color 0.2s ease, transform 0.2s ease;
+  color: #9fa5ac; /* неактивная */
 }
 
-/* Активная иконка */
-.material-symbols-outlined.active {
-  color: #48c78e; /* светло-зеленая иконка */
+.nav-icon.active {
+  color:  #48c78e; /* подсветка активной страницы */
   transform: scale(1.15);
 }
 
