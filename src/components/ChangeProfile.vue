@@ -20,7 +20,6 @@ const close = () => {
 };
 
 const saveUserData = () => {
-    emit('saveUser', username.value) // отправляем новое имя родителю
     close()
 }
 
