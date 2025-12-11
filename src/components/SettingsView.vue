@@ -7,6 +7,7 @@ import ToggleSwitch from './exportComponents/ToggleSwitch.vue';
 import QrWindow from './QrWindow.vue';
 import ChangeProfile from './ChangeProfile.vue';
 import { uploadAvatar } from '../api/avatars';
+import { changeUsername } from '../api/user';
 
 
 const curTheme = inject('theme');
@@ -23,8 +24,22 @@ const tgUsername = ref(userData.value ? userData.value.username : 'Неизве�
 const showQr = ref(false)
 const showEdit = ref(false)
 
-const saveUser = (newUsername) => {
-  userStore.setUsername(newUsername)
+const saveUser = async (newUsername) => {
+  if (!newUsername) return;
+  
+  const token = userStore.getAccessToken();
+  if (!token) return;
+
+  try {
+    const result = await changeUsername(token, newUsername);
+    
+    alert(result);
+    userStore.setUsername(newUsername) 
+
+  } catch (err) {
+    const msg = err.response?.data?.detail || err.response?.data?.message || err.message;
+    alert(`Ошибка изменения имени пользователя: ${msg}`);  
+  }
 }
 
 const saveAvatar = async (file) => {
