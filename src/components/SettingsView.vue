@@ -33,18 +33,24 @@ const saveAvatar = async (file) => {
   const token = userStore.getAccessToken();
   if (!token) return;
 
-  const formData = new FormData();
-  formData.append('file', file);
-
   try {
-    const result = await uploadAvatar(formData, token);
+    // Передаем файл напрямую, функция сама создаст FormData
+    const result = await uploadAvatar(file, token);
 
     console.log('Аватарка загружена:', result);
-    alert('Аватарка успешно загружена!');
+    
+    // Фиксируем GUID из ответа
+    if (result.data && result.data.guid) {
+      const avatarGuid = result.data.guid;
+      alert(`Аватарка успешно загружена! ID: ${avatarGuid}`);
+      
+    } else {
+      alert('Аватарка загружена, но сервер не вернул ID');
+    }
   } catch (err) {
     console.error('Ошибка загрузки аватарки:', err);
-    const errorMessage = err.response?.data?.detail || err.message;
-    alert(`Ошибка при ззагрузке аватарки: ${errorMessage}`, err.response?.data?.status);
+    const errorMessage = err.response?.data?.detail || err.response?.data?.message || err.message;
+    alert(`Ошибка при загрузке аватарки: ${errorMessage}`);
   }
 };
 
