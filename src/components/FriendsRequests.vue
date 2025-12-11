@@ -20,7 +20,7 @@ async function acceptRequest(req) {
 
     // удалить из стора
     userStore.removeFriendRequest(req.friendshipId)
-    alert(response.data)
+    alert("Вы успешно добавили пользователя в друзья! ", response.data)
 
   } catch (err) {
     const errorMessage = err.response?.data?.detail || err.message;
