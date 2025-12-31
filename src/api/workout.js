@@ -1,40 +1,42 @@
 import axios from 'axios'
-import { refreshAccessToken } from './auth.js'
-import { useUserStore } from '../data/user.js'
 
-const API_URL = 'https://gainly.site/workout/api/Workout/workouList'
+const BASE_URL = 'https://fitness-app-workout-api.fly.dev/api/Workout'
 
-export async function fetchTrainings() {
-    const userStore = useUserStore()
-    const accessToken = userStore.getAccessToken()
+export async function createTraining(token, training) {
+    const url = `${BASE_URL}/create`;
 
-    try {
-        const response = await axios.get(API_URL, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-        })
-
-        return response.data || []
-
-    } catch (e) {
-        if (e.response?.status === 401) {
-            console.warn("401 — пробуем обновить токен...")
-
-            try {
-                const newToken = await refreshAccessToken()
-
-                if (!newToken) throw new Error("Рефреш токена не удался")
-
-                const retry = await axios.get(API_URL, {
-                    headers: { Authorization: `Bearer ${newToken}` },
-                })
-
-                return retry.data || []
-
-            } catch (refreshError) {
-                throw refreshError
+    try{
+        const response = await axios.post(
+            url,
+            training,
+            {
+            headers: {
+                Accept: 'text/plain',
+                Authorization: `Bearer ${token}`
             }
-        } else {
-            throw e
-        }
-    }
+            }
+        );
+
+        return response.data
+    } catch (error) { throw error; }
+}
+
+
+export async function getWorkoutList(token) {
+    const url = `${BASE_URL}/workouList`;
+
+    try{
+        const response = await axios.get(
+            url,
+            {
+                headers: {
+                    'accept': 'text/plain',
+                    'Authorization': `Bearer ${token || ''}`
+                }
+            }
+        );
+
+        return response.data
+
+    } catch (error) { throw error; }
 }
