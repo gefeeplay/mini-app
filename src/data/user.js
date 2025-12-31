@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed, unref } from 'vue'
 import { refreshAccessToken } from '../api/auth.js'
-import { fetchTrainings as apiFetchTrainings } from '../api/workout.js'
+import { useTelegram } from '../composables/useTelegram.js'
 
 // 15 минут в миллисекундах
 const REFRESH_INTERVAL = 15 * 60 * 1000
@@ -82,66 +82,57 @@ export const useUserStore = defineStore('user', () => {
     }
 
     // ---- 🔄 АВТО-ОБНОВЛЕНИЕ КАЖДЫЕ 15 МИН ----
-function startAutoRefreshToken() {
-    if (autoRefreshStarted.value) return;
-
-    autoRefreshStarted.value = true;
-    console.log("Автообновление токена запущено");
-
-    // Функция для проверки и обновления токена
-    async function checkAndRefreshToken() {
-        const loginDateStr = localStorage.getItem("loginDate");
-
-        if (!loginDateStr) {
-            console.warn("loginDate отсутствует, пропускаем автообновление");
-            return;
-        }
-
-        const loginDate = Number(loginDateStr);
-        const now = Date.now();
-
-        const diffMinutes = (now - loginDate) / 1000 / 60;
-
-        console.log(`⏱ Время после loginDate: ${diffMinutes.toFixed(1)} мин`);
-
-        // Если прошло >= 15 минут → обновляем токен
-        if (diffMinutes >= 15) {
-            console.log("⏳ Прошло больше 15 минут — обновляем токен...");
-            await refreshAccessToken();
-        }
-    }
-
-    // Выполняем обновление токенов при входе
-    //refreshAccessToken()
-
-    // Затем запускаем интервал для последующих проверок
-    setInterval(checkAndRefreshToken, 60 * 1000); // проверяем каждую минуту
-}
-
-
-    // ---- FETCH TRAININGS ----
-    async function fetchTrainings() {
-        loading.value = true
-        error.value = null
-
+    function startAutoRefreshToken() {
+        // Проверяем, запущено ли уже автообновление
+        if (autoRefreshStarted.value) return;
+        
         try {
-            const data = await apiFetchTrainings()
-            trainings.value = data
+            // Получаем данные Telegram
+            const { userData } = useTelegram();
+            
+            // Проверяем наличие Telegram данных
+            if (!userData || !userData.value) {
+                console.log("Telegram данные отсутствуют, автообновление не запускается");
+                return;
+            }
+            
+            // Если Telegram данные есть, запускаем автообновление
+            autoRefreshStarted.value = true;
+            console.log("Telegram данные найдены, автообновление токена запущено");
+            
+            // Функция для проверки и обновления токена
+            async function checkAndRefreshToken() {
+                const loginDateStr = localStorage.getItem("loginDate");
+                
+                if (!loginDateStr) {
+                    console.warn("loginDate отсутствует, пропускаем автообновление");
+                    return;
+                }
+                
+                const loginDate = Number(loginDateStr);
+                const now = Date.now();
+                
+                const diffMinutes = (now - loginDate) / 1000 / 60;
+                
+                console.log(`⏱ Время после loginDate: ${diffMinutes.toFixed(1)} мин`);
+                
+                // Если прошло >= 15 минут → обновляем токен
+                if (diffMinutes >= 15) {
+                    console.log("⏳ Прошло больше 15 минут — обновляем токен...");
+                    await refreshAccessToken();
+                }
+            }
+            
+            // Выполняем обновление токенов при входе
+            refreshAccessToken();
 
-        } catch (e) {
-            error.value = e
-        } finally {
-            loading.value = false
+            // Затем запускаем интервал для последующих проверок
+            setInterval(checkAndRefreshToken, 60 * 1000); // проверяем каждую минуту
+            
+        } catch (error) {
+            // Если useTelegram() выбрасывает ошибку, значит Telegram провайдер не настроен
+            console.log("Telegram не инициализирован, автообновление не запускается", error.message);
         }
-    }
-
-    function addTraining(t) {
-        trainings.value.push(t)
-    }
-
-    function removeTraining(id) {
-        const idx = trainings.value.findIndex(t => t.tr_id === id)
-        if (idx !== -1) trainings.value.splice(idx, 1)
     }
 
     function setUsername(newName) {
@@ -173,9 +164,6 @@ function startAutoRefreshToken() {
 
         // действия
         startAutoRefreshToken,
-        fetchTrainings,
-        addTraining,
-        removeTraining,
         setUsername,
         loadUsername,
         setFriendRequests,
