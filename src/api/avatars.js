@@ -1,21 +1,21 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://gainly-avatars.fly.dev/api';
+const BASE_URL = import.meta.env.VITE_AVATARS_API_URL;
 
 // Загрузка аватарки пользователя
 export async function uploadAvatar(imageFile, token) {
     const url = `${BASE_URL}/avatar`;
-    
+
     const formData = new FormData();
     formData.append('avatar', imageFile);
-    
+
     const response = await axios.post(url, formData, {
         headers: {
             'accept': 'application/json',
             'Authorization': `Bearer ${token || ''}`,
         }
     });
-    
+
     return response;
 }
 
@@ -25,7 +25,7 @@ export async function getAvatar(token, username) {
 
     const response = await axios.get(url, {
         headers: {
-            'accept':'application/json',
+            'accept': 'application/json',
             'Authorization': `Bearer ${token || ''}`
         },
 

@@ -1,19 +1,19 @@
 import axios from 'axios'
 
-const BASE_URL = 'https://fitness-app-workout-api.fly.dev/api/Workout'
+const BASE_URL = import.meta.env.VITE_WORKOUT_API_URL
 
 export async function createTraining(token, training) {
     const url = `${BASE_URL}/create`;
 
-    try{
+    try {
         const response = await axios.post(
             url,
             training,
             {
-            headers: {
-                Accept: 'text/plain',
-                Authorization: `Bearer ${token}`
-            }
+                headers: {
+                    Accept: 'text/plain',
+                    Authorization: `Bearer ${token}`
+                }
             }
         );
 
@@ -25,7 +25,7 @@ export async function createTraining(token, training) {
 export async function getWorkoutList(token) {
     const url = `${BASE_URL}/workouList`;
 
-    try{
+    try {
         const response = await axios.get(
             url,
             {

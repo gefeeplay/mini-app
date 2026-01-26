@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = 'https://gainly.site/auth/api/user'
+const BASE_URL = import.meta.env.VITE_USER_API_URL
 
 export async function changeUsername(token, newUsername) {
     const url = `${BASE_URL}/change-username`;
@@ -14,11 +14,11 @@ export async function changeUsername(token, newUsername) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token || ''}`,
                 }
-            
+
             }
         );
-        
+
         return response.data;
-    }   catch (error) { throw error; }
-     
+    } catch (error) { throw error; }
+
 }

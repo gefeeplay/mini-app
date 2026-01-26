@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://gainly.site/auth/api/friends';
+const BASE_URL = import.meta.env.VITE_FRIENDS_API_URL;
 
 export async function getUsers(nickname, token) {
   const url = `${BASE_URL}/get-users?nickname=${encodeURIComponent(nickname)}`;
@@ -12,7 +12,7 @@ export async function getUsers(nickname, token) {
         Authorization: `Bearer ${token || ''}`
       }
     });
-    
+
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -37,7 +37,7 @@ export async function sendFriendRequest(username, token) {
       Authorization: `Bearer ${token || ''}`
     }
   });
-  
+
   return response.data;
 }
 
@@ -57,14 +57,14 @@ export async function getFriendRequests(token) {
 export async function respondToFriendRequest(friendshipId, accept, token) {
   const url = `${BASE_URL}/respond/${encodeURIComponent(friendshipId)}?accept=${accept}`;
 
-  const response = await axios.post(url, 
+  const response = await axios.post(url,
     {},
     {
-    headers: {
-      accept: 'text/plain',
-      Authorization: `Bearer ${token || ''}`
-    },
-  });
+      headers: {
+        accept: 'text/plain',
+        Authorization: `Bearer ${token || ''}`
+      },
+    });
 
   return response.data;
 }

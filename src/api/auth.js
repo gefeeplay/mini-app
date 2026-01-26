@@ -1,8 +1,8 @@
 import { useUserStore } from '../data/user.js'
 import axios from 'axios'
 
-const API_URL = 'https://gainly.site/auth/api/auth'
-const REFRESH_URL = 'https://gainly.site/auth/api/auth/refresh'
+const API_URL = import.meta.env.VITE_AUTH_API_URL
+const REFRESH_URL = import.meta.env.VITE_AUTH_REFRESH_URL
 const headers = {
   'Content-Type': 'application/json',
   'Accept': 'application/json',
@@ -12,7 +12,7 @@ export async function tgLogin(initDataRaw) {
   try {
     const response = await axios.post(
       `${API_URL}/tglogin`,
-      {initDataRaw: initDataRaw}, // тело запроса
+      { initDataRaw: initDataRaw }, // тело запроса
       {
         headers: headers
       }
@@ -27,28 +27,28 @@ export async function tgLogin(initDataRaw) {
 export async function refreshAccessToken() {
   const userStore = useUserStore()
   const refreshToken = userStore.getRefreshToken()
-    if (!refreshToken) {
-        console.warn("Нет refresh токена — автообновление остановлено")
-        return null
+  if (!refreshToken) {
+    console.warn("Нет refresh токена — автообновление остановлено")
+    return null
+  }
+
+  try {
+    const response = await axios.post(REFRESH_URL, { refreshToken })
+
+    if (response.data?.accessToken) {
+      userStore.setTokens({
+        access: response.data.accessToken,
+        refresh: response.data.refreshToken
+      })
+      localStorage.setItem('loginDate', Date.now().toString())
+      console.log("Access token обновлён автоматически")
+      return response.data.accessToken
     }
 
-    try {
-        const response = await axios.post(REFRESH_URL, { refreshToken })
+    throw new Error("Не удалось обновить токен")
 
-        if (response.data?.accessToken) {
-            userStore.setTokens({
-                access: response.data.accessToken,
-                refresh: response.data.refreshToken
-            })
-            localStorage.setItem('loginDate', Date.now().toString())
-            console.log("Access token обновлён автоматически")
-            return response.data.accessToken
-        }
-
-        throw new Error("Не удалось обновить токен")
-
-    } catch (e) {
-        console.error("Ошибка автообновления токена:", e)
-        return null
-    }
+  } catch (e) {
+    console.error("Ошибка автообновления токена:", e)
+    return null
+  }
 }
