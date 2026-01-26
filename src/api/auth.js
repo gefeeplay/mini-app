@@ -1,8 +1,9 @@
 import { useUserStore } from '../data/user.js'
 import axios from 'axios'
+import { API_CONFIG } from '../config/api.config.js'
 
-const API_URL = import.meta.env.VITE_AUTH_API_URL
-const REFRESH_URL = import.meta.env.VITE_AUTH_REFRESH_URL
+const API_URL = API_CONFIG.AUTH_API_URL
+const REFRESH_URL = API_CONFIG.AUTH_REFRESH_URL
 const headers = {
   'Content-Type': 'application/json',
   'Accept': 'application/json',

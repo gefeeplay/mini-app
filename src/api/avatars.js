@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { API_CONFIG } from '../config/api.config.js';
 
-const BASE_URL = import.meta.env.VITE_AVATARS_API_URL;
+const BASE_URL = API_CONFIG.AVATARS_API_URL;
 
 // Загрузка аватарки пользователя
 export async function uploadAvatar(imageFile, token) {

@@ -1,6 +1,7 @@
 import axios from 'axios'
+import { API_CONFIG } from '../config/api.config.js'
 
-const BASE_URL = import.meta.env.VITE_WORKOUT_API_URL
+const BASE_URL = API_CONFIG.WORKOUT_API_URL
 
 export async function createTraining(token, training) {
     const url = `${BASE_URL}/create`;
