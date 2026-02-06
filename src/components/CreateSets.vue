@@ -148,7 +148,7 @@ function close() {
 }
 
 .add-set {
-    margin: 10px 0;
+    margin: 20px 0;
     width: 80%;
     background: white;
     color: #000000;
@@ -172,7 +172,7 @@ function close() {
 }
 
 .header {
-    width: 348px;
+    width: 90%;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -238,17 +238,17 @@ function close() {
 }
 
 .table-head {
+    width: 90%;
     display: grid;
-    grid-template-columns: 48px 144px 144px;
-    gap: 10px;
-    padding: 0 16px;
+    grid-template-columns: 14% 38% 38%;
+    gap: 5%;
     margin-top: 12px;
     font-size: 13px;
     text-align: center;
 }
 
 .table-head.twoCols {
-    grid-template-columns: 48px 288px;
+    grid-template-columns: 14% 76%;
 }
 
 .table-head span {
@@ -262,6 +262,7 @@ function close() {
 }
 
 .rows {
+    width: 90%;
     margin-top: 8px;
     padding: 0 12px;
     display: flex;
@@ -275,8 +276,8 @@ function close() {
 
 .row {
     display: grid;
-    grid-template-columns: 40px 144px 144px;
-    gap: 10px;
+    grid-template-columns: 14% 38% 38%;
+    gap: 5%;
     align-items: center;
 }
 
