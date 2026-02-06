@@ -55,7 +55,7 @@ watch(() => props.modelValue, (v) => {
     border: 2px solid transparent;
     border-radius: 8px;
     outline: none;
-    background-color: #f3f3f4;
+    background-color: white;
     color: var(--dark-color);
     transition: .3s ease;
 }
