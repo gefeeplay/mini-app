@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import SearchInput from './exportComponents/SearchInput.vue';
+import SearchInput from '../components/exportComponents/SearchInput.vue';
 import { useUserStore } from '../data/user'
 import { getFriendRequests, getFriendsList } from '../api/friend';
 import { getAvatar } from '../api/avatars';

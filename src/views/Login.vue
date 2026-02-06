@@ -3,8 +3,8 @@ import { ref, onMounted, inject } from 'vue'
 import { tgLogin } from '../api/auth.js'
 import { useUserStore } from '../data/user.js'
 import { useTelegram } from '../composables/useTelegram.js'
-import RotatingText from './exportComponents/RotatingText.vue'
-import Loader from './exportComponents/Loader.vue'
+import RotatingText from '../components/exportComponents/RotatingText.vue'
+import Loader from '../components/exportComponents/Loader.vue'
 
 const userStore = useUserStore()
 const { userData, initDataRaw: telegramInitData } = useTelegram()

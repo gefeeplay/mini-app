@@ -2,8 +2,8 @@
 import { useUserStore } from '../data/user'
 import { ref, onMounted, computed } from 'vue'
 import { useTelegram } from '../composables/useTelegram'
-import SearchInput from './exportComponents/SearchInput.vue'
-import CreateTraining from './CreateTraining.vue'
+import SearchInput from '../components/exportComponents/SearchInput.vue'
+import CreateTraining from '../components/CreateTraining.vue'
 
 const userStore = useUserStore()
 const { userData, userPhoto } = useTelegram()

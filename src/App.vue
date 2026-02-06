@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, provide, ref, computed } from 'vue'
 import Navigation from './components/Navigation.vue'
-import LoginView from './components/LoginView.vue' // Импортируем компонент логина
+import Login from './views/Login.vue'
 import { provideTelegram } from './composables/useTelegram'
 import { useUserStore } from './data/user'
 
@@ -66,7 +66,7 @@ const showAppContent = computed(() => isAuthenticated.value)
     <Navigation :curTheme="theme"/>
   </div>
   
-  <LoginView v-else />
+  <Login v-else />
 </template>
 
 <style scoped></style>

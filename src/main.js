@@ -13,15 +13,15 @@ const router = createRouter({
   routes: [{
     name: 'Feed',
     path: '/',
-    component: () => import('./components/FeedView.vue')
+    component: () => import('./views/Feed.vue')
   },{
     name: 'Training',
     path: '/training',
-    component: () => import('./components/TrainingView.vue')
+    component: () => import('./views/Training.vue')
   },{
     name: 'Friends',
     path: '/friends',
-    component: () => import('./components/FriendsView.vue')
+    component: () => import('./views/Friends.vue')
   },{
     name: 'Find',
     path: '/friends/find', 
@@ -33,7 +33,7 @@ const router = createRouter({
   },{
     name: 'Settings',
     path: '/settings',
-    component: () => import('./components/SettingsView.vue')
+    component: () => import('./views/Settings.vue')
   }]
 })
 

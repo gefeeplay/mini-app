@@ -3,9 +3,9 @@ import { inject, ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
 import { useTelegram } from '../composables/useTelegram'
 import { useUserStore } from '../data/user';
-import ToggleSwitch from './exportComponents/ToggleSwitch.vue';
-import QrWindow from './QrWindow.vue';
-import ChangeProfile from './ChangeProfile.vue';
+import ToggleSwitch from '../components/exportComponents/ToggleSwitch.vue';
+import QrWindow from '../components/QrWindow.vue';
+import ChangeProfile from '../components/ChangeProfile.vue';
 import { uploadAvatar } from '../api/avatars';
 import { changeUsername } from '../api/user';
 
