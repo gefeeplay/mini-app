@@ -4,6 +4,8 @@ import { useUserStore } from "../data/user.js";
 import { createTraining } from "../api/workout.js";
 import Loader from './exportComponents/Loader.vue'
 import ChooseColor from "./ChooseColor.vue";
+import ChooseType from "./ChooseType.vue";
+import CreateSets from "./CreateSets.vue";
 import { Icon } from "@iconify/vue";
 import { color } from "motion-v";
 
@@ -39,6 +41,7 @@ const trainingColor = computed(() => trainingForm.color);
 const showColorModal = ref(false);
 
 //Тип
+const showTypeModal = ref(false);
 const trainingTypeLabel = computed(() => {
   return trainingForm.type === "cardio"
     ? "Кардио тренировка"
@@ -63,6 +66,19 @@ const formattedDate = computed(() => {
   const [y, m, d] = trainingForm.date.split("-");
   return `${d}.${m}.${y}`;
 });
+
+//Сеты
+const showSetsModal = ref(false);
+const currentSets = computed(() => {
+  return trainingForm.exercises[0]?.sets ?? []
+})
+const setsPreview = computed(() => {
+  const sets = currentSets.value
+  if (!sets.length) return '—'
+
+  const repsList = sets.map(s => s.reps).join('-')
+  return `${sets.length} | ${repsList}`
+})
 
 const errorMessage = ref("");
 const isLoading = ref(false)
@@ -114,7 +130,7 @@ async function saveTraining() {
 
     const result = await createTraining(token, payload);
 
-    alert(result);
+    if (result) { alert("Ваша тренировка сохранена!"); }
 
     emits("create");
     emits("close");
@@ -152,7 +168,7 @@ watch(
       <input ref="titleInput" v-model="trainingForm.title" class="title-input" :style="{
         color: trainingForm.title ? trainingColor : trainingColor,
         '--placeholder-color': trainingColor
-      }" placeholder="Название упражнения" />
+      }" placeholder="Название тренировки" />
     </div>
 
     <ChooseColor v-model="trainingForm.color" :show="showColorModal" @close="showColorModal = false" />
@@ -169,19 +185,24 @@ watch(
           <div class="right-small">
             <Icon :icon="trainingTypeIcon" width="24" height="24" class="icon" />
           </div>
-          <div class="right-small">
+          <div class="right-small" @click="showTypeModal = true">
             <Icon icon="weui:arrow-filled" width="12" height="24" class="icon" />
           </div>
         </div>
-
       </div>
+
+      <ChooseType v-model="trainingForm.type" :show="showTypeModal" @close="showTypeModal = false" />
 
       <div class="form-row">
         <span class="label">Сеты</span>
-        <div class="right value">
-          {{ trainingForm.tr_sets ?? "2/123-123" }}
+        <div class="right value" @click="showSetsModal = true">
+          {{ setsPreview }}
         </div>
       </div>
+
+      <CreateSets :show="showSetsModal" :exercise="trainingForm.exercises[0]" :trainingName="trainingForm.title"
+        :trainingColor="trainingForm.color" @update:exercise="trainingForm.exercises[0] = $event"
+        @close="showSetsModal = false" />
 
       <div class="form-row" @click="openDate">
         <span class="label">Дата</span>
@@ -236,7 +257,6 @@ watch(
   width: 100%;
   font-size: 32px;
   font-weight: 700;
-  color: #ffb800;
   border: none;
   outline: none;
   background: transparent;
