@@ -1,8 +1,11 @@
 <script setup>
-import { ref, reactive, computed, inject } from "vue";
+import { ref, reactive, computed, inject, watch, nextTick } from "vue";
 import { useUserStore } from "../data/user.js";
 import { createTraining } from "../api/workout.js";
 import Loader from './exportComponents/Loader.vue'
+import ChooseColor from "./ChooseColor.vue";
+import { Icon } from "@iconify/vue";
+import { color } from "motion-v";
 
 const props = defineProps({
   show: Boolean,       // открыто ли окно
@@ -12,13 +15,53 @@ const emits = defineEmits(["close", "create"]);
 
 const userStore = useUserStore();
 
-// базовая форма тренировки
 const trainingForm = reactive({
-  tr_name: "",
-  tr_sets: null,
-  tr_count: null,
-  tr_value: null,
-  /*tr_measure: ""*/
+  title: "",
+
+  color: "#ffb800",
+
+  type: "cardio", // cardio | strength
+
+  date: new Date().toISOString().slice(0, 10), // YYYY-MM-DD
+
+  exercises: [
+    {
+      name: "",
+      sets: [
+        { reps: 0, weight: 0 }
+      ]
+    }
+  ]
+});
+
+//Цвет
+const trainingColor = computed(() => trainingForm.color);
+const showColorModal = ref(false);
+
+//Тип
+const trainingTypeLabel = computed(() => {
+  return trainingForm.type === "cardio"
+    ? "Кардио тренировка"
+    : "Силовая тренировка";
+});
+
+//Иконка (от типа)
+const trainingTypeIcon = computed(() => {
+  return trainingForm.type === "cardio"
+    ? "tabler:bike"
+    : "lucide:biceps-flexed";
+});
+
+//Дата
+const dateInput = ref(null);
+const today = new Date().toISOString().slice(0, 10);
+function openDate() {
+  dateInput.value?.showPicker();
+}
+
+const formattedDate = computed(() => {
+  const [y, m, d] = trainingForm.date.split("-");
+  return `${d}.${m}.${y}`;
 });
 
 const errorMessage = ref("");
@@ -31,10 +74,9 @@ const loaderColor = computed(() => {
 
 const isFormValid = computed(() => {
   return (
-    trainingForm.tr_name.trim() !== "" &&
-    trainingForm.tr_sets > 0 &&
-    trainingForm.tr_count > 0 &&
-    trainingForm.tr_value > 0
+    trainingForm.title.trim() !== "" &&
+    trainingForm.exercises.length > 0 &&
+    trainingForm.exercises[0].name.trim() !== ""
   );
 });
 
@@ -51,16 +93,21 @@ async function saveTraining() {
     isLoading.value = true
 
     const payload = {
-      title: trainingForm.tr_name,
-      exercises: [
-        {
-          name: trainingForm.tr_name,
-          sets: trainingForm.tr_sets,
-          reps: trainingForm.tr_count,
-          weight: trainingForm.tr_value
-        }
-      ]
+      title: trainingForm.title,
+      /*Нет на сервере
+      type: trainingForm.type,   
+      date: trainingForm.date,
+      */
+
+      exercises: trainingForm.exercises.map(ex => ({
+        name: ex.name,
+        sets: ex.sets.map(set => ({
+          reps: set.reps,
+          weight: set.weight
+        }))
+      }))
     };
+
 
     const token = userStore.getAccessToken();
     if (!token) return;
@@ -83,164 +130,212 @@ function close() {
   emits("close");
 }
 
+// Для фокуса на названии
+const titleInput = ref(null);
+watch(
+  () => props.show,
+  async (val) => {
+    if (val) {
+      await nextTick();
+      titleInput.value?.focus();
+    }
+  }
+);
+
 </script>
 
 <template>
-  <div class="modal-backdrop" v-if="show" @click.self="close">
-    <div class="modal">
-      <div class="modal-title">Добавить тренировку</div>
+  <div v-if="show" class="create-training">
 
-      <div class="str">
-        <label>Название:</label>
-        <input 
-        v-model="trainingForm.tr_name" 
-        class="modal-text"
-        :class="{ 'input-error': !trainingForm.tr_name && errorMessage }" 
-        type="text" 
-        placeholder="Моя тренировка" 
-        />
-      </div>
-      <div class="str">
-        <label>Подходов:</label>
-        <input 
-        v-model.number="trainingForm.tr_sets" 
-        class="modal-text" 
-        :class="{ 'input-error': !trainingForm.tr_name && errorMessage }" 
-        type="number" 
-        />
-      </div>
-      <div class="str">
-        <label>За подход:</label>
-        <input 
-        v-model.number="trainingForm.tr_count" 
-        class="modal-text" 
-        :class="{ 'input-error': !trainingForm.tr_name && errorMessage }" 
-        type="number" 
-        />
-      </div>
-      <div class="str">
-        <label>Нагрузка:</label>
-        <input 
-        v-model.number="trainingForm.tr_value" 
-        class="modal-text" 
-        :class="{ 'input-error': !trainingForm.tr_name && errorMessage }"
-        type="number" 
-        />
-      </div>
-      <!--
-      <div class="str">
-        <label>Единица измерения:</label>
-        <input v-model="trainingForm.tr_measure" class="modal-text" type="text" placeholder="кг/л" />
-      </div>
-      -->
-      <button class="close-btn" @click="close">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-
-      <div v-if="errorMessage" class="error-text">
-        {{ errorMessage }}
-      </div>
-
-      <div v-if="isLoading" class="loader-wrapper">
-        <Loader :color="loaderColor" :size="6" />
-      </div>
-      <button v-else class="save-btn" @click="saveTraining">
-        Сохранить
-      </button>
+    <div class="header">
+      <div class="subtitle">Новая тренировка</div>
+      <input ref="titleInput" v-model="trainingForm.title" class="title-input" :style="{
+        color: trainingForm.title ? trainingColor : trainingColor,
+        '--placeholder-color': trainingColor
+      }" placeholder="Название упражнения" />
     </div>
+
+    <ChooseColor v-model="trainingForm.color" :show="showColorModal" @close="showColorModal = false" />
+
+    <div class="form">
+      <div class="form-row">
+        <span class="label">Цвет</span>
+        <span class="color-dot" :style="{ background: trainingColor }" @click="showColorModal = true"></span>
+      </div>
+
+      <div class="form-row">
+        <span class="label">Вид тренировки</span>
+        <div style="display: flex; flex-direction: row; gap: 8px;">
+          <div class="right-small">
+            <Icon :icon="trainingTypeIcon" width="24" height="24" class="icon" />
+          </div>
+          <div class="right-small">
+            <Icon icon="weui:arrow-filled" width="12" height="24" class="icon" />
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-row">
+        <span class="label">Сеты</span>
+        <div class="right value">
+          {{ trainingForm.tr_sets ?? "2/123-123" }}
+        </div>
+      </div>
+
+      <div class="form-row" @click="openDate">
+        <span class="label">Дата</span>
+        <div class="right value">
+          <input ref="dateInput" type="date" v-model="trainingForm.date" class="date-input hidden-date" />
+          <span class="value">{{ formattedDate }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="errorMessage" class="error-text">
+      {{ errorMessage }}
+    </div>
+
+    <button class="submit-btn add-training" :disabled="isLoading" @click="saveTraining">
+      <Loader v-if="isLoading" :color="loaderColor" :size="6" />
+      <span v-else>Добавить запись</span>
+    </button>
+
   </div>
 </template>
 
-<style scoped>
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
 
-.modal {
+<style scoped>
+.create-training {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  background: var(--not-theme-color);
+  box-sizing: border-box;
+  padding: 16px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: left;
-  gap: 0.5rem;
-  background: #fff;
-  border-radius: 16px;
-  padding: 20px;
-  max-width: 320px;
-  width: 80%;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  position: relative;
+
+  height: calc(100vh - 64px);
 }
 
-.modal-title {
-  font-size: 1rem;
-  color: var(--dark-color);
-  padding-bottom: 0.5rem;
+.header {
+  margin-bottom: 20px;
 }
 
-.str {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  width: 95%;
-  align-items: center;
-  gap: 0.5rem;
-  text-align: left;
-  color: var(--dark-color)
+.subtitle {
+  text-align: start;
+  font-weight: 600;
+  margin-bottom: 6px;
 }
 
-.modal-text {
+.title-input {
   width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  padding: 0.5rem;
-  border: 1px solid var(--dark-color);
-  border-radius: 5px;
-}
-
-.close-btn {
-  color: var(--dark-color);
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-}
-
-.save-btn {
-  background: #0088cc;
-  color: #fff;
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffb800;
   border: none;
-  padding: 0.5rem 0.8rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  margin-top: 10px;
-  font-size: small;
+  outline: none;
+  background: transparent;
+  padding: 0;
 }
 
-.save-btn:hover {
-  background: #006fa8;
+.title-input::placeholder {
+  color: var(--placeholder-color);
 }
 
-.error-text {
-  margin-top: 5px;
-  font-size: small;
-  color: var(--light-red-color);
+.form {
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.loader-wrapper {
+.form-row {
+  background: #ffffff;
+  height: 50px;
+  border-radius: 25px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  color: #222;
+}
+
+.right {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 80%;
-  margin-top: 20px;
+  width: 100px;
+  background-color: #F3F2F8;
+  border-radius: 20px;
+  padding: 14px 16px;
 }
 
+.right-small {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F3F2F8;
+  border-radius: 20px;
+  height: 40px;
+  width: 40px;
+}
+
+.value {
+  font-size: 13px;
+  color: #777;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.color-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ffb800;
+}
+
+.icon {
+  font-size: 20px;
+  color: #555;
+}
+
+.arrow {
+  font-size: 22px;
+  color: #bbb;
+}
+
+.add-training {
+  height: 50px;
+  margin-top: auto;
+  margin-bottom: 8px;
+  width: 80%;
+  background: #99BBFE;
+  border: none;
+  border-radius: 25px;
+  padding: 14px;
+  font-size: 14px;
+}
+
+.error-text {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #ff4d4f;
+  text-align: center;
+}
+
+.hidden-date {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
 </style>
