@@ -27,6 +27,7 @@ function close() {
 
 <template>
     <Teleport to="body">
+        <Transition name="overlay-fade">
         <div v-if="show" class="overlay" @click.self="close">
             <div class="sheet">
 
@@ -43,6 +44,7 @@ function close() {
 
             </div>
         </div>
+        </Transition>
     </Teleport>
 </template>
 
@@ -61,8 +63,7 @@ function close() {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 90%;
-    max-width: 420px;
+    width: 80%;
     background: #f6f6fb;
     border-radius: 24px;
     padding: 20px;
