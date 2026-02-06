@@ -3,7 +3,7 @@
 :root {
   font-family: "Comfortaa", "Open Sans", sans-serif;
   --dark-color: rgb(58, 58, 63);
-  --light-color: white;
+  --light-color: #F3F2F8;
   --light-red-color:rgb(230, 55, 55);
   --dark-red-color:rgb(145, 78, 78);
   
@@ -119,4 +119,20 @@ button {
   margin-right: 0.5rem;
   display: flex;
   align-items: center;
+}
+
+.submit-btn {
+  margin-top: auto;
+  width: 80%;
+  background: #99BBFE;
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
 }
