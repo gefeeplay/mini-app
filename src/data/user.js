@@ -9,6 +9,7 @@ const REFRESH_INTERVAL = 15 * 60 * 1000
 export const useUserStore = defineStore('user', () => {
     const username = ref('')
     const trainings = ref([])
+    const workouts = ref([])
     const loading = ref(false)
     const error = ref(null)
     const accessToken = ref(sessionStorage.getItem("accessToken"))
@@ -63,6 +64,23 @@ export const useUserStore = defineStore('user', () => {
             return { ...t, usernameStr: unref(raw) }
         })
     )
+
+    // Тренировки
+    function setWorkouts(list) {
+    workouts.value = list
+    }
+
+    function addWorkout(workout) {
+        workouts.value.unshift(workout)
+    }
+
+    function removeWorkout(id) {
+        workouts.value = workouts.value.filter(w => w.id !== id)
+    }
+
+    function clearWorkouts() {
+        workouts.value = []
+    }
 
     // ---- TOKEN FUNCS ----
     function getAccessToken() {
@@ -156,6 +174,7 @@ export const useUserStore = defineStore('user', () => {
         refreshToken,
         friendRequests,
         avatars,
+        workouts,
 
         // токены/логика
         getAccessToken,
@@ -175,6 +194,12 @@ export const useUserStore = defineStore('user', () => {
         getAvatar,
         hasAvatar,
         clearAvatar,
-        clearAllAvatars
+        clearAllAvatars,
+        
+        //Тренировки
+        setWorkouts,
+        addWorkout,
+        removeWorkout,
+        clearWorkouts,
     }
 })
