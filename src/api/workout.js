@@ -13,7 +13,7 @@ export async function createTraining(token, training) {
             {
                 headers: {
                     Accept: 'text/plain',
-                    Authorization: `Bearer ${token}`
+                    Authorization: `${token}`
                 }
             }
         );
@@ -32,7 +32,7 @@ export async function getWorkoutList(token) {
             {
                 headers: {
                     'accept': 'text/plain',
-                    'Authorization': `Bearer ${token || ''}`
+                    'Authorization': `${token || ''}`
                 }
             }
         );
