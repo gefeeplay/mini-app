@@ -1,6 +1,7 @@
 import axios from 'axios'
+import { API_CONFIG } from '../config/api.config.js';
 
-const BASE_URL = import.meta.env.VITE_USER_API_URL
+const BASE_URL = API_CONFIG.USER_API_URL
 
 export async function changeUsername(token, newUsername) {
     const url = `${BASE_URL}/change-username`;

@@ -5,6 +5,6 @@ export const API_CONFIG = {
   AVATARS_API_URL: 'https://gainly-avatars.fly.dev/api',
   WORKOUT_API_URL: 'https://fitness-app-workout-api.fly.dev/api/Workout',
   USER_API_URL: 'https://gainly.site/auth/api/user',
-  FRIENDS_API_URL: 'https://gainly.site/auth/api/friends'
+  FRIENDS_API_URL: 'https://fitness-app-auth-api.fly.dev/api/friends'
 }
 

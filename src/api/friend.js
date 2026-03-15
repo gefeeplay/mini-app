@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { API_CONFIG } from '../config/api.config.js';
 
-const BASE_URL = import.meta.env.VITE_FRIENDS_API_URL;
+const BASE_URL = API_CONFIG.FRIENDS_API_URL;
 
 export async function getUsers(nickname, token) {
   const url = `${BASE_URL}/get-users?nickname=${encodeURIComponent(nickname)}`;
