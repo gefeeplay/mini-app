@@ -41,3 +41,19 @@ export async function getWorkoutList(token) {
 
     } catch (error) { throw error; }
 }
+
+export async function deleteTraining(token, trainingId) {
+    const url = `${BASE_URL}/${trainingId}`;
+
+    try{
+        const response = await axios.delete(
+            url,
+            {
+                headers: {
+                    Accept: '*/*',
+                    Authorization: `${token}`
+                }
+            }
+        );
+    } catch (error) { throw error }
+}
