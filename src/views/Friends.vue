@@ -44,9 +44,9 @@ onMounted(async () => {
       }
 
       console.log('Друзья:', userStore.friends)
-    } catch (err) {
-      console.error(`Ошибка при запросе списка друзей ${user.username}:`, err);
-      const errorMessage = err.response?.data?.detail || er.message;
+    } catch (er) {
+      console.error(`Ошибка при запросе списка друзей ${userStore.username}:`, er);
+      const errorMessage = er.response?.data?.detail || er.message;
       alert(`Ошибка при запросе списка друзей: ${errorMessage}`, er.response?.data?.status);
     }
 
