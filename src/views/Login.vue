@@ -41,14 +41,14 @@ async function login() {
     }
 
     const data = await tgLogin(initDataSend)
-    /*console.log('Ответ сервера:', data)*/
 
+    /*
     // Всплывающее окно с ответом сервера
     if (data.message) {
       alert(data.message)
     } else {
       alert('Авторизация прошла успешно!')
-    }
+    }*/
 
     // Сохраняем данные пользователя
     if (data.username) {
