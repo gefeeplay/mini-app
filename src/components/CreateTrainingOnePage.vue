@@ -11,7 +11,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['close', 'create'])
+const emit = defineEmits(['close', 'created'])
 
 const userStore = useUserStore()
 
@@ -119,7 +119,7 @@ async function saveTraining() {
     await createTraining(token, payload)
     alert('Ваша тренировка сохранена!')
 
-    emit('create')
+    emit('created')
     emit('close')
   } catch (error) {
     errorMessage.value =
@@ -137,7 +137,7 @@ function close() {
 const showAddExerciseOverlay = ref(false)
 const touchStartX = ref(0)
 const touchEndX = ref(0)
-const SWIPE_THRESHOLD = 120 //чувствительность
+const SWIPE_THRESHOLD = 100 //чувствительность
 
 function onTouchStart(event) {
   if (!event.changedTouches?.length) return
@@ -280,10 +280,11 @@ function cancelAddExercise() {
     </div>
 
     <!-- Кнопка сохранить -->
-    <button class="save-training-btn" type="button" :disabled="isSaving" @click="saveTraining">
-      <Loader v-if="isSaving" :color="loaderColor" :size="6" />
-      <span v-else>Сохранить тренировку</span>
+    <Loader v-if="isSaving" :color="loaderColor" :size="6" class="loader-place" />
+    <button v-else class="save-training-btn" type="button" :disabled="isSaving" @click="saveTraining">
+      <span>Сохранить тренировку</span>
     </button>
+
 
     <!-- Оверлей добавления упражнения -->
     <transition name="fade">
@@ -309,7 +310,7 @@ function cancelAddExercise() {
 
   background: var(--not-theme-color, #f6f6fb);
   box-sizing: border-box;
-  padding: 24px 16px 96px;
+  padding: 24px 24px 96px;
 
   display: flex;
   flex-direction: column;
@@ -366,7 +367,7 @@ function cancelAddExercise() {
 }
 
 .exercise-card {
-  width: 100%;
+  width: 90%;
   max-width: 350px;
   background: #ffffff;
   border-radius: 24px;
@@ -519,6 +520,12 @@ function cancelAddExercise() {
   gap: 8px;
 }
 
+.loader-place {
+  position: fixed;
+  left: 50%;
+  bottom: 100px;
+}
+
 .save-training-btn:disabled {
   opacity: 0.7;
 }
@@ -592,13 +599,13 @@ function cancelAddExercise() {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 28px;
+  width: 44px;
   height: 240px;
 
   display: flex;
   align-items: center;
-  justify-content: center;
 
+  box-sizing: border-box;
   opacity: 0.55;
   transition: opacity 0.25s ease, transform 0.25s ease;
 
@@ -607,10 +614,14 @@ function cancelAddExercise() {
 
 .add-exercise-hint {
   right: 0;
+  justify-content: end;
+  padding-right: 8px;
 }
 
 .prev-exercise-hint {
   left: 0;
+  justify-content: start;
+  padding-left: 8px;
 }
 
 .hint-text,

@@ -4,7 +4,8 @@ import { ref, onMounted, computed } from 'vue'
 import { useTelegram } from '../composables/useTelegram'
 import SearchInput from '../components/exportComponents/SearchInput.vue'
 import CreateTrainingOnePage from '../components/CreateTrainingOnePage.vue'
-import { getWorkoutList } from '../api/workout.js'
+import Loader from '../components/exportComponents/Loader.vue'
+import { getWorkoutList, deleteTraining } from '../api/workout.js'
 import { Icon } from '@iconify/vue'
 
 const userStore = useUserStore()
@@ -41,6 +42,48 @@ function formatDate(dateStr) {
   })
 }
 
+// Тренировка успешно добавлена - обновляем список
+async function handleTrainingCreated() {
+  try {
+    const token = userStore.getAccessToken()
+    const data = await getWorkoutList(token)
+
+    userStore.setWorkouts(data)
+  } catch (err) {
+    console.error('Ошибка загрузки тренировок', err)
+  }
+}
+
+//Флаг процесса удаления
+const deletingId = ref(null)
+
+//Функция удаления тренировки
+async function handleDeleteWorkout(id) {
+  const confirmDelete = confirm('Удалить тренировку?')
+
+  if (!confirmDelete) {
+    return
+  }
+
+  try {
+    deletingId.value = id
+
+    const token = userStore.getAccessToken()
+
+    await deleteTraining(token, id)
+
+    // удаляем из store
+    userStore.setWorkouts(
+      userStore.workouts.filter(w => w.id !== id)
+    )
+
+  } catch (err) {
+    console.error('Ошибка удаления тренировки', err)
+  } finally {
+    deletingId.value = null
+  }
+}
+
 const showCreate = ref(false);
 
 </script>
@@ -67,11 +110,11 @@ const showCreate = ref(false);
       </button>
     </div>
 
-    <CreateTrainingOnePage :show="showCreate" @close="showCreate = false" />
+    <CreateTrainingOnePage :show="showCreate" @close="showCreate = false" @created="handleTrainingCreated" />
 
     <transition-group name="list" tag="div" class="tr-items">
 
-      <div class="tr-item" v-for="item in workouts" :key="item.id">
+      <div class="tr-item" :class="{ deleting: deletingId === item.id }" v-for="item in workouts" :key="item.id">
 
         <div class="tr-header">
 
@@ -93,11 +136,12 @@ const showCreate = ref(false);
           </div>
 
           <div class="tr-actions">
-            <button class="icon-btn">
-              <Icon icon="lucide:info" width="22" height="22" color="#666" />
+            <button class="loader-place">
+              <Loader v-if="deletingId === item.id" color="var(--theme-color)" :size="4" />
+              <Icon v-else icon="lucide:info" width="22" height="22" color="#666" />
             </button>
 
-            <button class="icon-btn delete">
+            <button class="loader-place" :disabled="deletingId === item.id" @click="handleDeleteWorkout(item.id)">
               <Icon icon="material-symbols:delete" width="24" height="24" color="var(--red-color)" />
             </button>
           </div>
@@ -147,8 +191,18 @@ const showCreate = ref(false);
   background: #e5e5ea;
   border-radius: 1rem;
   padding: 1rem;
-  width: 90%;
+  width: 85%;
   max-width: 420px;
+}
+
+.tr-item:active {
+  transform: scale(0.98);
+}
+
+.tr-item.deleting {
+  background: #ffdede;
+  opacity: 0.7;
+  transition: background 0.25s ease;
 }
 
 .tr-header {
@@ -187,16 +241,18 @@ const showCreate = ref(false);
 }
 
 .tr-title {
-  text-align: left;
-  color: #666;
   font-weight: 600;
   font-size: 1rem;
 }
 
 .tr-date {
-  text-align: left;
   font-size: 0.85rem;
-  color: #666;
+}
+
+.tr-date,
+.tr-title {
+  text-align: left;
+  color: var(--dark-color);
 }
 
 .tr-actions {
@@ -206,17 +262,16 @@ const showCreate = ref(false);
   gap: 0.8rem;
 }
 
-.icon-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.delete {
-  color: #d32f2f;
+.loader-place {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .tr-create {
+  color: var(--dark-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
