@@ -13,7 +13,7 @@ export async function createTraining(token, training) {
             {
                 headers: {
                     Accept: 'text/plain',
-                    Authorization: `${token}`
+                    Authorization: `Bearer ${token}`
                 }
             }
         );
@@ -32,7 +32,7 @@ export async function getWorkoutList(token) {
             {
                 headers: {
                     'accept': 'text/plain',
-                    'Authorization': `${token || ''}`
+                    'Authorization': `Bearer ${token || ''}`
                 }
             }
         );
@@ -51,9 +51,54 @@ export async function deleteTraining(token, trainingId) {
             {
                 headers: {
                     Accept: '*/*',
-                    Authorization: `${token}`
+                    Authorization: `Bearer ${token}`
                 }
             }
         );
     } catch (error) { throw error }
+}
+
+export async function getUserProfile(token, username) {
+    const url = `${BASE_URL}/profile/${username}`
+
+    try {
+        const response = await axios.get(
+            url,
+            {
+                headers: {
+                    Accept: 'text/plain',
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        )
+
+        return response.data
+
+    } catch (error) { throw error }
+}
+
+export async function getFriendTrainings(token, username, options = {}) {
+    let query = ''
+
+    if (options.last) {
+        query = `?Last=${options.last}`
+    } else if (options.from && options.to) {
+        query = `?From=${options.from}&To=${options.to}`
+    }
+
+    const url = `${BASE_URL}/workouList/${username}${query}`
+
+    try {
+        const response = await axios.get(url, {
+            headers: {
+                Accept: 'text/plain',
+                Authorization: `Bearer ${token}`
+            }
+        })
+
+        return response.data
+
+    } catch (error) {
+        throw error
+    }
 }
