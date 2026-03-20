@@ -1,9 +1,11 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import SearchInput from '../components/exportComponents/SearchInput.vue';
+import UserProfile from './UserProfile.vue';
 import { useUserStore } from '../data/user'
 import { getFriendRequests, getFriendsList } from '../api/friend';
 import { getAvatar } from '../api/avatars';
+import { Icon } from '@iconify/vue';
 
 const userStore = useUserStore()
 
@@ -70,8 +72,21 @@ onMounted(async () => {
   }
 })
 
-
 const requestsCount = computed(() => userStore.friendRequests.length)
+
+//Состояние окна профиля
+const selectedFriend = ref(null)
+const isProfileOpen = ref(false)
+
+const openProfile = (friend) => {
+  selectedFriend.value = friend
+  isProfileOpen.value = true
+}
+
+const closeProfile = () => {
+  isProfileOpen.value = false
+  selectedFriend.value = null
+}
 </script>
 
 <template>
@@ -88,21 +103,33 @@ const requestsCount = computed(() => userStore.friendRequests.length)
       <span v-if="requestsCount > 0" class="notif-badge">{{ requestsCount }}</span>
     </button>
   </div>
+
+  <!-- Friend list -->
   <div class="fr-list">
     <div class="friend-card" v-for="friend in userStore.friends" :key="friend.username">
       <div class="avatar">
         <!-- Используем аватарку из хранилища -->
-        <img v-if="userStore.getAvatar(friend.username)" :src="userStore.getAvatar(friend.username).url" class="avatar" />
+        <img v-if="userStore.getAvatar(friend.username)" :src="userStore.getAvatar(friend.username).url"
+          class="avatar" />
         <span v-else class="material-symbols-outlined" style="color: black; font-size: 2rem;">
           account_circle
         </span>
       </div>
+
       <div class="info">
         <div class="username">{{ friend.username }}</div>
         <div class="date">С нами с: {{ new Date(friend.registrationDate).toISOString().slice(0, 10) }}</div>
       </div>
-      <button><img src="../assets/chat-round-dots-svgrepo-com.svg" style="height: 1.5rem;" /></button>
+
+      <button @click="openProfile(friend)">
+        <Icon icon="material-symbols:info-outline-rounded" width="24" height="24" color="var(--dark-color)"/>
+      </button>
+
     </div>
+
+    <!-- Profile modal -->
+    <UserProfile v-if="selectedFriend" :user="selectedFriend" @close="closeProfile" />
+    
   </div>
 
 </template>
