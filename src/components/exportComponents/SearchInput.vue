@@ -2,7 +2,11 @@
 import { ref, watch } from "vue";
 
 const props = defineProps({
-  modelValue: String
+  modelValue: String,
+  placeholder: {
+    type: String,
+    default: 'Поиск...'
+  }
 });
 const emit = defineEmits(["update:modelValue"]);
 
@@ -25,7 +29,7 @@ watch(() => props.modelValue, (v) => {
                7.5-7.5 7.5-7.5-3.365-7.5-7.5z" />
         </svg>
 
-        <input v-model="search" placeholder="Поиск" type="search" class="input">
+        <input v-model="search" :placeholder="placeholder" type="search" class="input">
 
         <svg v-if="search.length" @click="search = ''" class="clear-icon" aria-hidden="true" viewBox="0 0 24 24">
             <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 
