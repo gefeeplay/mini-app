@@ -398,13 +398,18 @@ h2{
   flex-direction: column;
   align-items: center;
   gap: 10px;
+
+  padding: 10px;
+  max-height: 350px;     /* 🔥 ограничение */
+  overflow-y: auto;      /* 🔥 включаем скролл */
+  flex: 1; 
 }
 
 .workout-item {
   display: flex;
   align-items: center;
   background: #e5e5ea;
-  width: 100%;
+  width: 90%;
   padding: 12px;
   border-radius: 12px;
 }
