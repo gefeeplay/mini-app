@@ -85,6 +85,25 @@ async function handleDeleteWorkout(id) {
 }
 
 const showCreate = ref(false);
+const searchQuery = ref('')
+
+//Фильтр тренировок
+const filteredWorkouts = computed(() => {
+  if (!searchQuery.value.trim()) {
+    return workouts.value
+  }
+
+  const query = searchQuery.value.toLowerCase()
+
+  return workouts.value.filter(w =>
+    w.title.toLowerCase().includes(query)
+  )
+})
+
+//Флаг пустого списка
+const isSearchEmpty = computed(() => {
+  return searchQuery.value.trim().length > 0 && filteredWorkouts.value.length === 0
+})
 
 </script>
 
@@ -94,7 +113,7 @@ const showCreate = ref(false);
   </div>
 
   <div class="search-input">
-    <SearchInput />
+    <SearchInput v-model="searchQuery" placeholder="Поиск тренировок..." />
   </div>
 
   <div class="def-text">
@@ -114,7 +133,8 @@ const showCreate = ref(false);
 
     <transition-group name="list" tag="div" class="tr-items">
 
-      <div class="tr-item" :class="{ deleting: deletingId === item.id }" v-for="item in workouts" :key="item.id">
+      <div class="tr-item" :class="{ deleting: deletingId === item.id }" v-for="item in filteredWorkouts"
+        :key="item.id">
 
         <div class="tr-header">
 
@@ -151,6 +171,10 @@ const showCreate = ref(false);
       </div>
 
     </transition-group>
+
+    <div v-if="isSearchEmpty" class="error-text">
+      По запросу "<b>{{ searchQuery }}</b>" ничего не найдено
+    </div>
   </div>
 </template>
 
@@ -175,6 +199,7 @@ const showCreate = ref(false);
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;
+  padding-bottom: 16px;
 }
 
 .tr-items {
@@ -296,5 +321,11 @@ const showCreate = ref(false);
 .list-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+.error-text {
+  margin-top: 12px;
+  color: #ff4d4f;
+  text-align: center;
 }
 </style>
